@@ -4,7 +4,11 @@ metadata:
   name: mysql-master-svc
 spec:
   ports:
-  - port: 3306
+  - name: mysql
+    port: 3306
+  - name: mysql-exporter
+    port: 9104 #>> use this port for mysql-metrics
+    targetPort: 9104
   selector:
     app: mysql-master
 ---
@@ -12,6 +16,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql-master
+  namespace: sre-challenge
 spec:
   selector:
     matchLabels:
@@ -22,6 +27,9 @@ spec:
     metadata:
       labels:
         app: mysql-master
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9104'
     spec:
       containers:
       - name: mysql
@@ -47,6 +55,36 @@ spec:
           mountPath: /var/lib/mysql
         - name: config-volume
           mountPath: /etc/mysql/conf.d
+      - name: mysqld-exporter
+        image: prom/mysqld-exporter:v0.14.0
+        args:
+        - "--collect.global_status"
+        - "--collect.info_schema.innodb_metrics"
+        - "--collect.auto_increment.columns"
+        - "--collect.info_schema.processlist"
+        - "--collect.binlog_size"
+        - "--collect.info_schema.tablestats"
+        - "--collect.global_variables"
+        - "--collect.info_schema.query_response_time"
+        - "--collect.info_schema.userstats"
+        - "--collect.info_schema.tables"
+        - "--collect.perf_schema.tablelocks"
+        - "--collect.perf_schema.file_events"
+        - "--collect.perf_schema.eventswaits"
+        - "--collect.perf_schema.indexiowaits"
+        - "--collect.perf_schema.tableiowaits"
+        - "--collect.slave_status"
+        ports:
+        - containerPort: 9104
+          name: exporter
+        env:
+        - name: DATA_SOURCE_NAME
+          value: "root:$(MYSQL_ROOT_PASSWORD)@tcp(127.0.0.1:3306)/"
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: ROOT_PASSWORD
       volumes:
       - name: config-volume
         configMap:
