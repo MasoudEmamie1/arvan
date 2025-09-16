@@ -1,0 +1,17 @@
+CREATE USER 'repl'@'%' IDENTIFIED BY 'YXJ2YW4tcmVwbGljYQ==';
+
+ALTER USER 'replication_user'@'%' IDENTIFIED BY 'arvan-replica';
+
+
+
+
+
+GRANT REPLICATION SLAVE ON *.* TO 'replication_user'@'%';
+
+
+
+CHANGE MASTER TO
+  MASTER_HOST='mysql-master-svc',
+  MASTER_USER='repl',
+  MASTER_PASSWORD='YOUR_REPLICATION_PASSWORD',
+  MASTER_AUTO_POSITION = 1;

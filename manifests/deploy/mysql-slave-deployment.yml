@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-slave-svc
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql-slave
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-slave
+spec:
+  selector:
+    matchLabels:
+      app: mysql-slave
+  serviceName: mysql-slave-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-slave
+    spec:
+      initContainers:
+      - name: wait-for-master
+        image: busybox:1.28
+        command: [ 'sh', '-c', 'until nslookup mysql-master-svc; do echo waiting for master; sleep 2; done;' ]
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+          name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: ROOT_PASSWORD
+        resources:
+          requests:
+            cpu: "4"
+            memory: "8Gi"
+          limits:
+            cpu: "4"
+            memory: "8Gi"
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+        - name: config-volume
+          mountPath: /etc/mysql/conf.d
+      volumes:
+      - name: config-volume
+        configMap:
+          name: mysql-config
+          items:
+          - key: slave.cnf
+            path: slave.cnf
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi
