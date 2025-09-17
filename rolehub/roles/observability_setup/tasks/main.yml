@@ -1,0 +1,67 @@
+---
+# tasks file for observability
+- name: Copy file
+  ansible.builtin.copy:
+    src: pip.conf
+    dest: /root/.config/pip/pip.conf
+    mode: "0600"
+  tags:
+  - preparing
+
+- name: Install multi python packages
+  ansible.builtin.pip:
+    name:
+    - docker
+    - PyYAML==5.3.1
+    - docker-compose
+  tags:
+  - preparing
+  - docker
+
+- name: Create a docker network with name
+  community.docker.docker_network:
+    name: "{{ item }}"
+    driver_options:
+      com.docker.network.bridge.name: "{{ item }}"
+  loop:
+  - web-network
+  - app-network
+  tags:
+  - preparing
+  - docker
+
+- name: Creates directory
+  ansible.builtin.file:
+    path: "{{ service_dir }}"
+    state: directory
+    mode: "0600"
+  tags:
+  - preparing
+
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: compose.yml
+    dest: "{{ service_dir }}/compose.yml"
+    mode: "0600"
+  tags:
+  - preparing
+
+- name: Template a file to path
+  ansible.builtin.template:
+    src: .env.j2
+    dest: "{{ service_dir }}/.env"
+    mode: "0600"
+  tags:
+  - preparing
+
+- name: Pull images for project
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ service_dir }}"
+  tags:
+  - pull
+
+- name: Deploy Docker Compose stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ service_dir }}"
+  tags:
+  - deploy

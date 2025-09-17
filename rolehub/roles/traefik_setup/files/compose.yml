@@ -1,0 +1,57 @@
+networks:
+  web-network:
+    name: web-network
+    external: true
+  app-network:
+    name: app-network
+    external: true
+
+volumes:
+  traefik_data:
+    name: traefik_data
+    external: false
+
+
+services:
+  traefik:
+    image: traefik:${image_tag}
+    container_name: traefik
+    hostname: traefik
+    restart: ${restart_policy}
+    command:
+      - "--log.level=INFO"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.network=web-network"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=web-secure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web-secure.address=:443"
+      - "--certificatesresolvers.le.acme.tlschallenge=true"
+      - "--certificatesresolvers.le.acme.email=${acme_email}"
+      - "--certificatesresolvers.le.acme.storage=/certs/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "traefik_data:/certs"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - web-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.web-auth.basicauth.users=${web_auth_user}:${web_auth_pass}"
+      - "traefik.http.routers.http-traefik.rule=Host(`${traefik_domain}`)"
+      - "traefik.http.routers.http-traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.rule=Host(`${traefik_domain}`)"
+      - "traefik.http.routers.traefik.entrypoints=web-secure"
+      - "traefik.http.routers.traefik.middlewares=web-auth@docker"
+      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.tls.certresolver=le"
+      - "traefik.http.services.traefik.loadBalancer.server.port=8080"
+
+
+
+

@@ -1,0 +1,9 @@
+---
+- name: Deploy  Monitoring Stack
+  hosts: monitoring_server
+  roles:
+    - os_hardening
+    - ssh_hardening
+    - docker_setup
+    - traefik_setup
+    - observability_setup

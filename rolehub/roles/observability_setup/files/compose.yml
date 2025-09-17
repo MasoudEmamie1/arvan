@@ -1,0 +1,56 @@
+networks:
+  web-network:
+    external: true
+  app-network:
+    external: true
+volumes:
+  prometheus-data:
+  grafana_data:
+services:
+  prometheus:
+    image: prom/prometheus:${PROM_TAG} 
+    restart: ${RESTART_POLICY}
+    container_name: prometheus
+    networks:
+      - app-network
+      - web-network
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+      - --storage.tsdb.retention.size=10GB
+      - --web.enable-lifecycle
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web-network"
+      - "traefik.http.routers.prometheus.entrypoints=web-secure"
+      - "traefik.http.routers.prometheus.rule=Host(`${PROM_SUBDOMAIN}.${DOMAIN}`)"
+      # - "traefik.http.routers.prometheus.entrypoints=web"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+  grafana:
+    image: grafana/grafana:${GRAFANA_TAG}
+    restart: ${RESTART_POLICY}
+    container_name: grafana
+    networks:
+      - app-network
+      - web-network
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+        #- GF_INSTALL_PLUGINS=${GRAFANA_INSTALL_PLUGINS}
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_PATHS_DATA=/var/lib/grafana
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web-network"
+      - "traefik.http.routers.grafana.entrypoints=web-secure"
+      - "traefik.http.routers.grafana.rule=Host(`${GRAFANA_DOMAIN}`)"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+    depends_on:
+      - prometheus
