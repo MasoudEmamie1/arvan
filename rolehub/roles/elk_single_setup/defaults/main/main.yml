@@ -22,6 +22,7 @@ RESTART_POLICY: on-failure
 service_subdirs:
   - elasticsearch
   - logstash
+  - logstash/pipeline 
   - kibana
   - filebeat-logstash
 service_dir_mode: 0600

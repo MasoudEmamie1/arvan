@@ -6,7 +6,7 @@
     dest: /root/.config/pip/pip.conf
     mode: "0600"
   tags:
-  - preparing
+  - preparing_elk
 
 - name: Install multi python packages
   ansible.builtin.pip:
@@ -15,7 +15,7 @@
     - PyYAML==5.3.1
     - docker-compose
   tags:
-  - preparing
+  - preparing_elk
   - docker
 
 - name: Create a docker network with name
@@ -27,7 +27,7 @@
   - web-network
   - elk-network
   tags:
-  - preparing
+  - preparing_elk
   - docker
 
 - name: Creates directory
@@ -36,7 +36,7 @@
     state: directory
     mode: "0600"
   tags:
-  - preparing
+  - preparing_elk
 
 
 - name: Create service subdirectories
@@ -45,7 +45,35 @@
     state: directory
     mode: "{{ service_dir_mode | default('0600') }}"
   loop: "{{ service_subdirs }}"
-  tags: preparing
+  tags: preparing_elk
+
+- name: Template Elasticsearch configuration
+  ansible.builtin.template:
+    src: elasticsearch.yml.j2
+    dest: "{{ service_dir }}/elasticsearch/elasticsearch.yml"
+    mode: "0600"
+  tags: preparing_elk
+
+- name: Template Kibana configuration
+  ansible.builtin.template:
+    src: kibana.yml.j2
+    dest: "{{ service_dir }}/kibana/kibana.yml"
+    mode: "0600"
+  tags: preparing_elk
+
+- name: Template Logstash pipeline configuration
+  ansible.builtin.template:
+    src: logstash.conf.j2
+    dest: "{{ service_dir }}/logstash/pipeline/main.pipeline.conf"
+    mode: "0600"
+  tags: preparing_elk
+
+- name: Template Filebeat configuration
+  ansible.builtin.template:
+    src: filebeat.yml.j2
+    dest: "{{ service_dir }}/filebeat-logstash/filebeat.yml"
+    mode: "0600"
+  tags: preparing_elk
 
 
 - name: Copy file with owner and permissions
@@ -54,7 +82,7 @@
     dest: "{{ service_dir }}/compose.yml"
     mode: "0600"
   tags:
-  - preparing
+  - preparing_elk
 
 - name: Template a file to path
   ansible.builtin.template:
@@ -62,17 +90,16 @@
     dest: "{{ service_dir }}/.env"
     mode: "0600"
   tags:
-  - preparing_observe
+  - preparing_elk
 
 - name: Pull images for project
   community.docker.docker_compose_v2_pull:
     project_src: "{{ service_dir }}"
   tags:
-  - pull_observe
+  - pull_elk
 
 - name: Deploy Docker Compose stack
   community.docker.docker_compose_v2:
     project_src: "{{ service_dir }}"
   tags:
-  - deploy_observe
-
+  - deploy_elk
