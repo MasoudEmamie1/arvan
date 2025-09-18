@@ -1,0 +1,6 @@
+---
+# tasks file for linux_setup
+- name: Ensure the system is Debian-based
+  ansible.builtin.import_tasks:
+    file: prepare-debian.yml
+  when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"

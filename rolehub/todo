@@ -1,6 +1,10 @@
 - [ ] Server prepation
+- [ ]  change_apt_repo
 - [ ]  os_harden
 - [ ]  ssh_harden
-- [ ]  change_apt_repo
 - [ ] install docker 
 - [ ] (Optional) install docker
+- [ ] traefik setup
+- [ ] observability setup
+- [ ] provision grafana
+- [ ] 

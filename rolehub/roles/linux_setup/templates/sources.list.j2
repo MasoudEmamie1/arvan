@@ -1,0 +1,24 @@
+{#-
+  Jinja2 template for /etc/apt/sources.list
+  Expected context:
+    distro_codename:   e.g. "bookworm"
+    include_debsrc:    true | false      # toggle src repos
+    repos:             # list of dicts
+      - url: "https://ftp.debian.org/debian/"
+        suite_suffix: ""                 # "" → stable; "-updates", "-backports", etc.
+      - url: "https://security.debian.org/debian-security/"
+        suite_suffix: "-security"
+    components: ["contrib", "main", "non-free", "non-free-firmware"]
+-#}
+
+{% for repo in repos %}
+{# Build full suite string: bookworm + any suffix e.g. "-updates" #}
+{% set suite = distro_codename ~ repo.suite_suffix %}
+deb {{ repo.url }} {{ suite }} {{ components | join(' ') }}
+{% if include_debsrc %}
+deb-src {{ repo.url }} {{ suite }} {{ components | join(' ') }}
+{% else %}
+# deb-src {{ repo.url }} {{ suite }} {{ components | join(' ') }}
+{% endif %}
+
+{% endfor %}

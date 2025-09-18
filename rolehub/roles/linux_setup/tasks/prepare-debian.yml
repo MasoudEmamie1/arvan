@@ -1,0 +1,17 @@
+- name: Ensure the previous sourcelist is removed
+  ansible.builtin.file:
+    path: /etc/apt/sources.list
+    state: absent
+  tags:
+  - prepare
+  - remove_sourcelist
+- name: Copy the new sources.list file
+  ansible.builtin.template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list
+  tags:
+  - prepare
+  - copy_sourcelist
+- name: Ensure the apt cache is updated
+  ansible.builtin.apt:
+    update_cache: yes

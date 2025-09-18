@@ -1,8 +1,10 @@
 ---
 - name: Deploy  Monitoring Stack
-  hosts: monitoring_server
+  hosts: prom-grafana-arvantest
+  gather_facts: true
   roles:
-    - os_hardening
+    - linux_setup
+    # - os_hardening
     - ssh_hardening
     - docker_setup
     - traefik_setup

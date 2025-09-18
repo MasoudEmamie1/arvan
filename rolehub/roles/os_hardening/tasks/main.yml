@@ -3,4 +3,4 @@
   ansible.builtin.include_tasks: hardening.yml
   when: os_hardening_enabled | bool
   tags:
-    - always
+    - always_os

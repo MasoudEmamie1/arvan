@@ -1,0 +1,7 @@
+---
+- name: Linux Server Prepare
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - linux_setup

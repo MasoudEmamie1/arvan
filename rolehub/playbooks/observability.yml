@@ -1,0 +1,6 @@
+- name: Install and configuration gitlab service
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+  - observability_setup

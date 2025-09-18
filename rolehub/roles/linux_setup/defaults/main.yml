@@ -1,0 +1,15 @@
+---
+# defaults file for linux_setup
+distro_codename: bookworm
+include_debsrc: false # comment out deb-src lines (matches your example)
+components:
+- contrib
+- main
+- non-free
+- non-free-firmware
+repos:
+- { url: "https://repo.jalinuxy.ir/repository/debian/", suite_suffix: "" } #https://ftp.debian.org/debian/
+- { url: "https://repo.jalinuxy.ir/repository/debian/", suite_suffix: "-updates" }
+- { url: "https://repo.jalinuxy.ir/repository/debian/", suite_suffix: "-proposed-updates" }
+- { url: "https://repo.jalinuxy.ir/repository/debian/", suite_suffix: "-backports" }
+- { url: "https://repo.jalinuxy.ir/repository/debian-security/", suite_suffix: "-security" } #https://security.debian.org/debian-security/

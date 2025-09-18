@@ -1,6 +1,6 @@
 ---
 
-os_new_root_password: {{ os_new_root_password_hash }}
+os_new_root_password: "{{ os_new_root_password_hash }}"
 os_env_user_paths: [/usr/local/sbin, /usr/local/bin, /usr/sbin, /usr/bin, /sbin, /bin]
 os_env_extra_user_paths: []
 os_auth_pw_max_age: 60
@@ -174,7 +174,7 @@ sysctl_config:
   # proxy), will never be able to forward packets, and therefore, never serve as a router.
   # | sysctl-01 | sysctl-19
   net.ipv4.ip_forward: 1
-  net.ipv6.conf.all.forwarding: 1
+  net.ipv6.conf.all.forwarding: 0
 
   # Enable RFC-recommended source validation feature.
   # If the return packet does not go out the same interface that the corresponding
@@ -329,7 +329,7 @@ os_unused_filesystems:
 os_filesystem_whitelist: []
 # Set to false to turn the role into a no-op. Useful when using
 # the Ansible role dependency mechanism.
-os_hardening_enabled: true
+os_hardening_enabled: false
 
 # Set to false to disable installing and configuring auditd.
 os_auditd_enabled: true
@@ -501,3 +501,15 @@ os_mnt_var_tmp_passno: ""
 # keep .netrc file for users in whitelist
 os_netrc_enabled: true
 os_netrc_whitelist_user: []
+
+os_iptables_enabled: true
+iptables:
+  nic_access:
+    - eth0
+    - lo
+  tcp_port:
+    - 80
+    - 443
+  # udp_port:
+  ip_access:
+    - 217.218.103.89

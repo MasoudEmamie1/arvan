@@ -1,0 +1,17 @@
+---
+
+DOMAIN: mon.kube0.ir
+
+# defaults file for observability
+service_dir: "{{ project_dir }}/observability"
+
+project_dir: /opt/services
+
+# docker configuration
+prometheus_image_tag: v3.3.0
+restart_policy: unless-stopped
+
+PROM_SUBDOMAIN_: prom
+GRAFANA_SUBDOMAIN_: dash
+
+HOSTNAME: node-exporter

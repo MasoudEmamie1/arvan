@@ -1,5 +1,5 @@
 ---
-main_domain: grafana.lnx1.ir
+main_domain: arvan.lnx1.ir
 # traefik domain
 traefik_domain: "traefik.{{ main_domain }}"
 

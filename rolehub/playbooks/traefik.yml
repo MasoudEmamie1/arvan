@@ -1,0 +1,7 @@
+---
+- name: Install Traefik
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - traefik_setup

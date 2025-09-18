@@ -16,7 +16,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql-slave
-  namespace: sre-challenge
+  namespace: sre-challange
 spec:
   selector:
     matchLabels:
@@ -49,8 +49,8 @@ spec:
               key: ROOT_PASSWORD
         resources:
           requests:
-            cpu: "4"
-            memory: "8Gi"
+            cpu: "2"
+            memory: "4Gi"
           limits:
             cpu: "4"
             memory: "8Gi"
