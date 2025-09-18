@@ -1,17 +1,27 @@
 ---
+#### DOMAINS LIST
+DOMAIN: elk.kube0.ir
+SUBDOMAIN_ELASTIC: es
+SUBDOMAIN_KIBANA: dash
+# SUBDOMAIN_FLEET: fleet if we want to deploy a integrated and high traffic design we can you fleet to integrate with elasticsearsh.
 
-DOMAIN: mon.kube0.ir
 
-# defaults file for observability
-service_dir: "{{ project_dir }}/observability"
+## SERVICES Hostname
+SERVICE_HOSTNAMES: arvan.elk.server
+
+# ELK VERSION
+ELK_VERSION: 7.17.13
+# defaults file for
+service_dir: "{{ project_dir }}/elk_single_node"
 
 project_dir: /opt/services
 
 # docker configuration
-prometheus_image_tag: v3.3.0
-restart_policy: unless-stopped
+RESTART_POLICY: on-failure
 
-PROM_SUBDOMAIN_: prom
-GRAFANA_SUBDOMAIN_: dash
-
-HOSTNAME: node-exporter
+service_subdirs:
+  - elasticsearch
+  - logstash
+  - kibana
+  - filebeat-logstash
+service_dir_mode: 0600

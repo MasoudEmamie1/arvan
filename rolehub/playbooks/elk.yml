@@ -1,0 +1,6 @@
+- name: Install and configuration ELK(Single node) service
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+  - elk_single_setup

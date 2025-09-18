@@ -1,4 +1,4 @@
-- name: Install and configuration gitlab service
+- name: Install and configuration Prom+grafana service
   hosts: all
   become: true
   gather_facts: true

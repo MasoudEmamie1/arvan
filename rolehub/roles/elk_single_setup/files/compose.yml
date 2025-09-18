@@ -1,71 +1,160 @@
+name: 'ELK-single-node'
+
+volumes:
+  elasticsearch_data:
+    name: elasticsearch_data
+  filebeat_logstash_data:
+    name: filebeat_logstash_data
+  # filebeat_elasticsearch_data:
+  #   name: filebeat_elasticsearch_data
+  # auditbeat_data:
+  #   name: auditbeat_data
+  # metricbeat_data:
+  #   name: metricbeat_data
+  # packetbeat_data:
+  #   name: packetbeat_data
+
 networks:
   web-network:
     external: true
-  app-network:
+    name: web-network
+  elk-network:
     external: true
-volumes:
-  prometheus-data:
-  grafana_data:
+    name: elk-network
+
 services:
-  prometheus:
-    image: prom/prometheus:${PROM_TAG} 
+  elasticsearch:
+    image: elasticsearch:${ELK_VERSION}
+    container_name: elasticsearch
     restart: ${RESTART_POLICY}
-    container_name: prometheus
-    networks:
-      - app-network
-      - web-network
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.path=/prometheus
-      - --storage.tsdb.retention.time=30d
-      - --storage.tsdb.retention.size=10GB
-      - --web.enable-lifecycle
-    volumes:
-      - ./prometheus:/etc/prometheus
-      - prometheus-data:/prometheus
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=web-network
-      - traefik.http.routers.prometheus.entrypoints=web
-      - traefik.http.routers.prometheus.rule=Host(`${PROM_SUBDOMAIN}.${DOMAIN}`)
-      - traefik.http.routers.prometheus.middlewares=https-redirect
-      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.prometheus-secure.entrypoints=web-secure
-      - traefik.http.routers.prometheus-secure.rule=Host(`${PROM_SUBDOMAIN}.${DOMAIN}`)
-      - traefik.http.routers.prometheus-secure.tls=true
-      - traefik.http.routers.prometheus-secure.tls.options=default
-      - traefik.http.routers.prometheus-secure.middlewares=auth
-      - traefik.http.middlewares.auth.basicauth.users=${WEB_AUTH_PROM_USER}:${WEB_AUTH_PROM_PASS}
-      - traefik.http.routers.prometheus-secure.tls.certresolver=le
-      - traefik.http.services.prometheus.loadbalancer.server.port=9090
-  grafana:
-    image: grafana/grafana:${GRAFANA_TAG}
-    restart: ${RESTART_POLICY}
-    container_name: grafana
-    networks:
-      - app-network
-      - web-network
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana:/etc/grafana/provisioning
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-        #- GF_INSTALL_PLUGINS=${GRAFANA_INSTALL_PLUGINS}
-      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-      - GF_PATHS_DATA=/var/lib/grafana
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      ELASTIC_USERNAME: ${ELASTICSEARCH_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      node.name: elasticsearch
+      network.host: 0.0.0.0
+      http.port: 9200
+      cluster.name: docker-cluster
+      discovery.type: single-node
+      bootstrap.memory_lock: "true"
+      http.cors.enabled: "true"
+      xpack.security.authc.api_key.enabled: "true"
+      xpack.license.self_generated.type: basic
+      xpack.security.enabled: "true"
+      xpack.monitoring.collection.enabled: "true"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+      - ./elasticsearch/health-check.sh:/usr/share/elasticsearch/health-check.sh
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - web-network
+      - elk-network
+    healthcheck:
+      test: [ "CMD", "sh",  "/usr/share/elasticsearch/health-check.sh" ]
+      interval: 30s
+      timeout: 3s
     labels:
       - traefik.enable=true
       - traefik.docker.network=web-network
-      - traefik.http.routers.grafana.entrypoints=web
-      - traefik.http.routers.grafana.rule=Host(`${GRAFANA_SUBDOMAIN}.${GRAFANA_DOMAIN}`)
-      - traefik.http.routers.grafana.middlewares=https-redirect
+      - traefik.http.routers.elasticsearch.entrypoints=web
+      - traefik.http.routers.elasticsearch.rule=Host(`${ELASTICSEARCH_SUB_DOMAIN}.${DOMAIN_NAME}`)
+      - traefik.http.routers.elasticsearch.middlewares=https-redirect
       - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.grafana-secure.entrypoints=web-secure
-      - traefik.http.routers.grafana-secure.rule=Host(`${GRAFANA_SUBDOMAIN}.${GRAFANA_DOMAIN}`)
-      - traefik.http.routers.grafana-secure.tls=true
-      - traefik.http.routers.grafana-secure.tls.options=default
-      - traefik.http.routers.grafana-secure.tls.certresolver=le
-      - traefik.http.services.grafana.loadbalancer.server.port=3000
+      - traefik.http.routers.elasticsearch-secure.entrypoints=web-secure
+      - traefik.http.routers.elasticsearch-secure.rule=Host(`${ELASTICSEARCH_SUB_DOMAIN}.${DOMAIN_NAME}`)
+      - traefik.http.routers.elasticsearch-secure.tls=true
+      - traefik.http.routers.elasticsearch-secure.tls.options=default
+      - traefik.http.routers.elasticsearch-secure.tls.certresolver=le
+      - traefik.http.services.elasticsearch.loadbalancer.server.port=9200
+
+  logstash:
+    image: logstash:${ELK_VERSION}
+    container_name: logstash
+    restart: ${RESTART_POLICY}
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx1g -Xms1g"
+      ELASTICSEARCH_HOSTNAME: ${ELASTICSEARCH_HOSTNAME}
+      ELASTICSEARCH_USERNAME: ${ELASTICSEARCH_USERNAME}
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+    networks:
+      - elk-network
     depends_on:
-      - prometheus
+      elasticsearch:
+        condition: service_healthy
+
+  kibana:
+    image: kibana:${ELK_VERSION}
+    container_name: kibana
+    restart: ${RESTART_POLICY}
+    environment:
+      - "SERVERNAME=kibana"
+      - "ELASTICSEARCH_HOSTNAME=${ELASTICSEARCH_HOSTNAME}"
+      - "ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}"
+      - "ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}"
+      - "KIBANA_PUBLIC_URL=${KIBANA_PUBLIC_URL}"
+      - "MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED=true"
+      - "XPACK_FLEET_ENABLED=true"
+      - "XPACK_FLEET_AGENTS_ENABLED=true"
+      - "XPACK_FLEET_AGENTS_ELASTICSEARCH_HOST=${ELASTICSEARCH_HOSTNAME}"
+      - "XPACK_FLEET_AGENTS_FLEET_SERVER_HOSTS=[\"http://fleet:8220\"]"
+      - "XPACK_FLEET_AGENTS_TLSCHECKDISABLED=true"
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    healthcheck:
+      test: "curl -f http://localhost:5601/login | grep kbn-injected-metadata 2>&1 >/dev/null"
+      retries: 600
+      interval: 1s
+    networks:
+      - web-network
+      - elk-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web-network"
+      - "traefik.http.routers.kibana.entrypoints=web"
+      - "traefik.http.routers.kibana.rule=Host(`${KIBANA_SUB_DOMAIN}.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.kibana.middlewares=https-redirect"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.kibana-secure.entrypoints=web-secure"
+      - "traefik.http.routers.kibana-secure.rule=Host(`${KIBANA_SUB_DOMAIN}.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.kibana-secure.tls=true"
+      - "traefik.http.routers.kibana-secure.tls.options=default"
+      - "traefik.http.routers.kibana-secure.tls.certresolver=le"
+      - "traefik.http.services.kibana.loadbalancer.server.port=5601"
+
+  filebeat-logstash:
+    image: elastic/filebeat:${ELK_VERSION}
+    user: root
+    container_name: filebeat-logstash
+    hostname: "filebeat-logstash-${HOSTNAME}"
+    restart: ${RESTART_POLICY}
+    command: ["--strict.perms=false"]
+    environment:
+      ELASTICSEARCH_HOSTNAME: ${ELASTICSEARCH_HOSTNAME}
+      ELASTICSEARCH_USERNAME: ${ELASTICSEARCH_USERNAME}
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      KIBANA_HOSTNAME: ${KIBANA_HOSTNAME}
+    volumes:
+      - ./filebeat-logstash/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log:/var/log:ro
+      - filebeat_logstash_data:/var/lib/filebeat/data
+    networks:
+      - elk-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy

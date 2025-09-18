@@ -25,7 +25,7 @@
       com.docker.network.bridge.name: "{{ item }}"
   loop:
   - web-network
-  - app-network
+  - elk-network
   tags:
   - preparing
   - docker
@@ -37,6 +37,16 @@
     mode: "0600"
   tags:
   - preparing
+
+
+- name: Create service subdirectories
+  ansible.builtin.file:
+    path: "{{ service_dir }}/{{ item }}"
+    state: directory
+    mode: "{{ service_dir_mode | default('0600') }}"
+  loop: "{{ service_subdirs }}"
+  tags: preparing
+
 
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
@@ -65,12 +75,4 @@
     project_src: "{{ service_dir }}"
   tags:
   - deploy_observe
-
-- name: Template a promethues config.yml to path
-  ansible.builtin.template:
-    src: prometheus.yml.j2
-    dest: "{{ service_dir }}/prometheus/prometheus.yml"
-    mode: "0644"
-  tags:
-  - preparing_observe
 
