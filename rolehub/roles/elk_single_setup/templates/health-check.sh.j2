@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+ELASTIC_USERNAME="{{ ELASTICSEARCH_USERNAME }}"
+ELASTIC_PASSWORD="{{ ELASTICSEARCH_PASSWORD }}"
+ELASTIC_HOST=localhost
+ELASTIC_PORT=9200
+
+if health="$(curl -fsSL --user "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" "http://${ELASTIC_HOST}:${ELASTIC_PORT}/_cat/health?h=status")"; then
+  # trim whitespace (avoids "green " with trailing space)
+  health="$(echo "$health" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')"
+  if [ "$health" = "green" ] || [ "$health" = "yellow" ]; then
+    exit 0
+  fi
+  echo >&2 "unexpected health status: $health"
+fi
+
+exit 1

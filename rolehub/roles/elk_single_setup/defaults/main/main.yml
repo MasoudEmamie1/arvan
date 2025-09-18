@@ -6,6 +6,8 @@ SUBDOMAIN_KIBANA: dash
 # SUBDOMAIN_FLEET: fleet if we want to deploy a integrated and high traffic design we can you fleet to integrate with elasticsearsh.
 
 
+ELASTICSEARCH_HOSTNAME_VAR: http://elasticsearch:9200
+KIBANA_PUBLIC_URL_VAR: https://${SUBDOMAIN_KIBANA}.${DOMAIN}
 ## SERVICES Hostname
 SERVICE_HOSTNAMES: arvan.elk.server
 

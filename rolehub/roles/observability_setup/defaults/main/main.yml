@@ -9,9 +9,16 @@ project_dir: /opt/services
 
 # docker configuration
 prometheus_image_tag: v3.3.0
+filebeat_image_tag: 7.17.13
+grafana_image_tag: 12.0s
 restart_policy: unless-stopped
 
 PROM_SUBDOMAIN_: prom
 GRAFANA_SUBDOMAIN_: dash
 
 HOSTNAME: node-exporter
+
+service_subdirs:
+  - prometheus
+  - filebeat
+service_dir_mode: 0755

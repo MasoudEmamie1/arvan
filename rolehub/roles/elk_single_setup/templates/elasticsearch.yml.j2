@@ -1,0 +1,14 @@
+# Listen on all network interfaces within the container
+network.host: 0.0.0.0
+
+# Define the cluster name
+cluster.name: docker-cluster
+
+# Specify single-node discovery for a standalone instance
+discovery.type: single-node
+
+# Enable security features
+xpack.license.self_generated.type: trial
+xpack.security.enabled: true
+xpack.security.authc.api_key.enabled: true
+xpack.monitoring.collection.enabled: true

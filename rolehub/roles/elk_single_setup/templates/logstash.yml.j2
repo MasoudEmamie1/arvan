@@ -1,0 +1,7 @@
+---
+http.host: "0.0.0.0"
+
+## X-Pack security credentials
+xpack.monitoring.elasticsearch.hosts: [ "${SERVICE_HOSTNAMES}" ]
+xpack.monitoring.elasticsearch.username: ${ELASTIC_USERNAME_MASKED}
+xpack.monitoring.elasticsearch.password: ${ELASTIC_PASSWORD_MASKED}

@@ -54,6 +54,13 @@
     mode: "0600"
   tags: preparing_elk
 
+- name: Template Elasticsearch configuration
+  ansible.builtin.template:
+    src: health-check.sh.yml.j2
+    dest: "{{ service_dir }}/elasticsearch/health-check.sh"
+    mode: "0600"
+  tags: preparing_elk
+
 - name: Template Kibana configuration
   ansible.builtin.template:
     src: kibana.yml.j2
@@ -64,7 +71,7 @@
 - name: Template Logstash pipeline configuration
   ansible.builtin.template:
     src: logstash.conf.j2
-    dest: "{{ service_dir }}/logstash/pipeline/main.pipeline.conf"
+    dest: "{{ service_dir }}/logstash/pipeline/pipeline.conf"
     mode: "0600"
   tags: preparing_elk
 

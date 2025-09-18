@@ -6,7 +6,7 @@
     dest: /root/.config/pip/pip.conf
     mode: "0600"
   tags:
-  - preparing
+  - preparing_observe
 
 - name: Install multi python packages
   ansible.builtin.pip:
@@ -15,7 +15,7 @@
     - PyYAML==5.3.1
     - docker-compose
   tags:
-  - preparing
+  - preparing_observe
   - docker
 
 - name: Create a docker network with name
@@ -27,7 +27,7 @@
   - web-network
   - app-network
   tags:
-  - preparing
+  - preparing_observe
   - docker
 
 - name: Creates directory
@@ -36,7 +36,31 @@
     state: directory
     mode: "0600"
   tags:
-  - preparing
+  - preparing_observe
+
+- name: Create service subdirectories
+  ansible.builtin.file:
+    path: "{{ service_dir }}/{{ item }}"
+    state: directory
+    mode: "{{ service_dir_mode | default('0755') }}"
+  loop: "{{ service_subdirs }}"
+  tags: preparing_observe
+
+- name: Template a promethues config.yml to path
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    dest: "{{ service_dir }}/prometheus/prometheus.yml"
+    mode: "0644"
+  tags:
+  - preparing_observe
+
+- name: Template a filebeat.yml to path
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    dest: "{{ service_dir }}/filebeat/filebeat.yml"
+    mode: "0644"
+  tags:
+  - preparing_observe
 
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
@@ -44,7 +68,7 @@
     dest: "{{ service_dir }}/compose.yml"
     mode: "0600"
   tags:
-  - preparing
+  - preparing_observe
 
 - name: Template a file to path
   ansible.builtin.template:
@@ -66,11 +90,4 @@
   tags:
   - deploy_observe
 
-- name: Template a promethues config.yml to path
-  ansible.builtin.template:
-    src: prometheus.yml.j2
-    dest: "{{ service_dir }}/prometheus/prometheus.yml"
-    mode: "0644"
-  tags:
-  - preparing_observe
 

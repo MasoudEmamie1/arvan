@@ -1,0 +1,12 @@
+input {
+  beats {
+    port => 5044
+  }
+}
+output {
+	elasticsearch {
+		hosts => [ "${SERVICE_HOSTNAMES}" ]
+		user => "${ELASTIC_USERNAME_MASKED}"
+		password => "${ELASTIC_PASSWORD_MASKED}"
+	}
+}
