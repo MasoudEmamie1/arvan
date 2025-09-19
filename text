@@ -1,17 +1,44 @@
-CREATE USER 'repl'@'%' IDENTIFIED BY 'YXJ2YW4tcmVwbGljYQ==';
+CREATE USER 'replication'@'%' IDENTIFIED BY 'arvan-replica';
 
-ALTER USER 'replication_user'@'%' IDENTIFIED BY 'arvan-replica';
-
-
+ALTER USER 'replication'@'%' IDENTIFIED BY 'arvan-replica';
 
 
 
-GRANT REPLICATION SLAVE ON *.* TO 'replication_user'@'%';
+
+
+GRANT REPLICATION SLAVE ON *.* TO 'replication'@'%';
 
 
 
 CHANGE MASTER TO
   MASTER_HOST='mysql-master-svc',
-  MASTER_USER='repl',
-  MASTER_PASSWORD='YOUR_REPLICATION_PASSWORD',
+  MASTER_USER='replication',
+  MASTER_PASSWORD='arvan-replica',
   MASTER_AUTO_POSITION = 1;
+
+
+  CREATE TABLE Persons (
+    PersonID int,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255)
+);
+
+CREATE TABLE authors (id INT, name VARCHAR(20), email VARCHAR(20));
+INSERT INTO authors (id,name,email) VALUES(1,"Vivek","xuz@abc.com");
+
+
+
+
+
+DROP USER IF EXISTS 'mysqld_exporter'@'127.0.0.1';
+DROP USER IF EXISTS 'mysqld_exporter'@'::1';
+DROP USER IF EXISTS 'mysqld_exporter'@'localhost';
+CREATE USER 'mysqld_exporter'@'127.0.0.1' IDENTIFIED BY 'exporter';
+CREATE USER 'mysqld_exporter'@'::1'       IDENTIFIED BY 'exporter';
+CREATE USER 'mysqld_exporter'@'localhost' IDENTIFIED BY 'exporter';
+GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'127.0.0.1';
+GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'::1';
+GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'localhost';
+FLUSH PRIVILEGES;

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-script
+  namespace: arvan-test
+data:
+  # This shell script runs first. It replaces the password placeholder
+  # with the real password from the environment variable.
+  init.sh: |
+    #!/bin/sh
+    sed -i "s/REPLICATION_PASSWORD_PLACEHOLDER/${REPLICATION_PASSWORD}/g" /docker-entrypoint-initdb.d/init.sql
+    sed -i "s/APP_PASSWORD_PLACEHOLDER/${APP_USER_PASSWORD}/g" /docker-entrypoint-initdb.d/init.sql
+
+  # This is your SQL script with placeholders.
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS my_app_db;
+    CREATE USER 'my_app_user'@'%' IDENTIFIED BY 'APP_PASSWORD_PLACEHOLDER';
+    GRANT ALL PRIVILEGES ON my_app_db.* TO 'my_app_user'@'%';
+    CREATE USER 'replication_user'@'%' IDENTIFIED WITH mysql_native_password BY 'REPLICATION_PASSWORD_PLACEHOLDER';
+    GRANT REPLICATION SLAVE ON *.* TO 'replication_user'@'%';
+    FLUSH PRIVILEGES;

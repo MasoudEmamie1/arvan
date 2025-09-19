@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-metrics
+  namespace: arvan-test
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '9104'
+spec:
+  selector:
+    app: mysql-master
+  ports:
+  - name: metrics
+    port: 9104
+    targetPort: metrics
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mysql-metrics
+  namespace: arvan-test
+  labels:
+    app: mysql-slave
+subsets:
+- addresses:
+  - ip: <IP_OF_SLAVE_POD>
+  ports:
+  - name: metrics
+    port: 9104
+    protocol: TCP

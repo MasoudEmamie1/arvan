@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-master-config
+  namespace: arvan-test
+data:
+  master.cnf: |
+    [mysqld]
+    server-id=1
+    log-bin=mysql-bin
+    gtid-mode=ON
+    enforce-gtid-consistency=ON
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-slave-config
+  namespace: arvan-test
+data:
+  slave.cnf: |
+    [mysqld]
+    server-id=2
+    super-read-only=ON
+    gtid-mode=ON
+    enforce-gtid-consistency=ON

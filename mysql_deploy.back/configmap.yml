@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+data:
+  master.cnf: |
+    # [mysqld]
+    # log-bin
+    # server-id=1
+    [mysqld]
+    server_id=1
+    log_bin=mysql-bin
+    binlog_format=ROW
+    gtid_mode=ON
+    enforce-gtid-consistency=ON
+    default_authentication_plugin=mysql_native_password
+    # Tunings
+    # innodb_buffer_pool_size=2G
+    # innodb_log_file_size=512M
+    # innodb_flush_log_at_trx_commit=1
+  slave.cnf: |
+    # [mysqld]
+    # super-read-only
+    # server-id=2
+    # gtid-mode=ON
+    # enforce-gtid-consistency=ON
+    [mysqld]
+    server_id=2
+    log_bin=mysql-bin
+    binlog_format=ROW
+    gtid_mode=ON
+    enforce_gtid_consistency=ON
+    read_only=ON
+    super_read_only=ON
+    default_authentication_plugin=mysql_native_password

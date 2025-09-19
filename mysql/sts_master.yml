@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-master
+  namespace: arvan-test
+  labels:
+    app: mysql-master
+spec:
+  ports:
+  - name: mysql
+    port: 3306
+  clusterIP: None # headless
+  selector:
+    app: mysql-master
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-master
+  namespace: arvan-test
+spec:
+  serviceName: mysql-master
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-master
+  template:
+    metadata:
+      labels:
+        app: mysql-master
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+          name: mysql
+        resources:
+          requests:
+            cpu: "2"
+            memory: "4Gi"
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: ROOT_PASSWORD
+        volumeMounts:
+        - name: mysql-master-data
+          mountPath: /var/lib/mysql
+        - name: mysql-master-config
+          mountPath: /etc/mysql/conf.d
+      - name: mysql-exporter
+        image: prom/mysqld-exporter:v0.14.0
+        args: [ "--collect.info_schema.tables.databases='*'" ] ## we can add other metrics here by config
+        ports:
+        - containerPort: 9104
+          name: metrics
+        env:
+        - name: DATA_SOURCE_NAME
+          value: "root:$(MYSQL_ROOT_PASSWORD)@(localhost:3306)/"
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: ROOT_PASSWORD
+      volumes:
+      - name: mysql-master-config
+        configMap:
+          name: mysql-master-config
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-master-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi
