@@ -8,3 +8,21 @@ scrape_configs:
 - job_name: 'prometheus'
   static_configs:
   - targets: [ 'localhost:9090' ]
+
+- job_name: 'mysql-master'
+  scheme: https
+  metrics_path: /master/metrics
+  static_configs:
+    - targets: ['metrics.kube0.ir']
+  basic_auth:
+    username: {{ WEB_AUTH_PROM_USER_MASKED }}
+    password: {{ WEB_AUTH_PROM_PASS_MASKED_SCRAPE }}
+
+- job_name: 'mysql-slave'
+  scheme: https
+  metrics_path: /slave/metrics
+  static_configs:
+    - targets: ['metrics.kube0.ir']
+  basic_auth:
+    username: {{ WEB_AUTH_PROM_USER_MASKED }}
+    password: {{ WEB_AUTH_PROM_PASS_MASKED_SCRAPE }}

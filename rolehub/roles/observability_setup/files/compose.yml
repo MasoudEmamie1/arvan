@@ -77,15 +77,12 @@ services:
     image: elastic/filebeat:${FILEBEAT_TAG}
     container_name: filebeat
     restart: ${RESTART_POLICY}
-    user: root # برای دسترسی به لاگ‌های سیستم و داکر سوکت الزامی است
+    user: root
     networks:
       - web-network 
     command: ["--strict.perms=false"]
     volumes:
       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      # دسترسی به لاگ‌های سیستم عامل میزبان (برای auth, syslog, kernel)
       - /var/log:/var/log:ro
-      # دسترسی به داکر برای جمع‌آوری متادیتای کانتینرها
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      # ولوم برای نگهداری وضعیت فایل‌بیت (جلوگیری از ارسال لاگ تکراری)
       - filebeat_data:/usr/share/filebeat/data
