@@ -51,12 +51,12 @@
   ansible.builtin.template:
     src: elasticsearch.yml.j2
     dest: "{{ service_dir }}/elasticsearch/elasticsearch.yml"
-    mode: "0600"
+    mode: "{{ service_conf_mode }}"
   tags: preparing_elk
 
 - name: Template Elasticsearch configuration
   ansible.builtin.template:
-    src: health-check.sh.yml.j2
+    src: health-check.sh.j2
     dest: "{{ service_dir }}/elasticsearch/health-check.sh"
     mode: "0600"
   tags: preparing_elk
@@ -65,37 +65,56 @@
   ansible.builtin.template:
     src: kibana.yml.j2
     dest: "{{ service_dir }}/kibana/kibana.yml"
-    mode: "0600"
+    mode: "{{  service_conf_mode }}"
   tags: preparing_elk
 
 - name: Template Logstash pipeline configuration
   ansible.builtin.template:
-    src: logstash.conf.j2
+    src: logstash.yml.j2
+    dest: "{{ service_dir }}/logstash/logstash.yml"
+    mode: "{{ service_conf_mode }}"
+  tags: preparing_elk
+
+- name: Template Logstash pipeline configuration
+  ansible.builtin.template:
+    src: pipeline.conf.j2
     dest: "{{ service_dir }}/logstash/pipeline/pipeline.conf"
-    mode: "0600"
+    mode: "{{ service_conf_mode }}"
+  tags: preparing_elk
+
+- name : Install rsyslog if not installed 
+  apt:
+    name: rsyslog
+    state: present
+  tags: preparing_elk
+  
+- name: Template Filebeat configuration
+  ansible.builtin.template:
+    src: filebeat.yml.j2
+    dest: "{{ service_dir }}/filebeat-es/filebeat.yml"
+    mode: "{{ service_conf_mode }}"
   tags: preparing_elk
 
 - name: Template Filebeat configuration
   ansible.builtin.template:
-    src: filebeat.yml.j2
-    dest: "{{ service_dir }}/filebeat-logstash/filebeat.yml"
-    mode: "0600"
+    src: system.yml.j2
+    dest: "{{ service_dir }}/filebeat-es/modules.d/system.yml"
+    mode: "{{ service_conf_mode }}"
   tags: preparing_elk
-
 
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
     src: compose.yml
     dest: "{{ service_dir }}/compose.yml"
-    mode: "0600"
+    mode: "{{ service_conf_mode }}"
   tags:
   - preparing_elk
 
-- name: Template a file to path
+- name: Template a .env to path
   ansible.builtin.template:
     src: .env.j2
     dest: "{{ service_dir }}/.env"
-    mode: "0600"
+    mode: "{{ service_conf_mode }}"
   tags:
   - preparing_elk
 

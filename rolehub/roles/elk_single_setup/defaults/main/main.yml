@@ -1,13 +1,13 @@
 ---
 #### DOMAINS LIST
-DOMAIN: elk.kube0.ir
+DOMAIN: log.kube0.ir
 SUBDOMAIN_ELASTIC: es
 SUBDOMAIN_KIBANA: dash
 # SUBDOMAIN_FLEET: fleet if we want to deploy a integrated and high traffic design we can you fleet to integrate with elasticsearsh.
 
 
 ELASTICSEARCH_HOSTNAME_VAR: http://elasticsearch:9200
-KIBANA_PUBLIC_URL_VAR: https://${SUBDOMAIN_KIBANA}.${DOMAIN}
+KIBANA_PUBLIC_URL_VAR: http://kibana:5601
 ## SERVICES Hostname
 SERVICE_HOSTNAMES: arvan.elk.server
 
@@ -26,5 +26,7 @@ service_subdirs:
   - logstash
   - logstash/pipeline 
   - kibana
-  - filebeat-logstash
-service_dir_mode: 0600
+  - filebeat-es
+  - filebeat-es/modules.d
+service_dir_mode: "0755"
+service_conf_mode: "0755"

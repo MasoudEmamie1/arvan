@@ -9,7 +9,7 @@ CURRENT_PORT=22
 
 # Here we try using ssh config file for manage it 
 SERVERS=( 
-prom-grafana-arvantest
+arvan-elk-main./s
 	)
 
 

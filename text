@@ -42,3 +42,22 @@ GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'127.0.0.1
 GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'::1';
 GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'localhost';
 FLUSH PRIVILEGES;
+
+
+
+
+
+
+  filebeat setup --index-management --pipelines --dashboards -e \
+  -E output.elasticsearch.hosts=["http://elasticsearch:9200"] \
+  -E output.elasticsearch.username=elastic \
+  -E output.elasticsearch.password='lh7e3n3GJ2TVso3WWlXc0IOSZOJ39HlWwCu4gYK8LwYd3emUZE' \
+  -E setup.kibana.host=http://kibana:5601 \
+  -E setup.kibana.username=elastic \
+  -E setup.kibana.password='lh7e3n3GJ2TVso3WWlXc0IOSZOJ39HlWwCu4gYK8LwYd3emUZE'
+
+
+
+
+# this is fuckly great 
+remember to user docker exec in ansible to provision dashboards

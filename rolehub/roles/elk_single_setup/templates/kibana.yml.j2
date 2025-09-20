@@ -1,13 +1,11 @@
 ---
-## Default Kibana configuration from kibana-docker.
-## https://github.com/elastic/kibana-docker/blob/master/.tedi/template/kibana.yml.j2
 
 server.name: kibana
 server.host: "0"
-server.publicBaseUrl: ${KIBANA_PUBLIC_URL_VAR}
-elasticsearch.hosts: [ "${ELASTICSEARCH_HOSTNAME_VAR}" ]
+server.publicBaseUrl: "https://{{ SUBDOMAIN_KIBANA }}.{{ DOMAIN }}"
+elasticsearch.hosts: [ "{{ ELASTICSEARCH_HOSTNAME_VAR }}" ]
 xpack.monitoring.ui.container.elasticsearch.enabled: true
 
 ## X-Pack security credentials
-elasticsearch.username: ${ELASTIC_USERNAME_MASKED}
-elasticsearch.password: ${ELASTIC_PASSWORD_MASKED}
+elasticsearch.username: {{ ELASTIC_USERNAME_MASKED }}
+elasticsearch.password: {{ ELASTIC_PASSWORD_MASKED }}

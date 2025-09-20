@@ -3,16 +3,10 @@ name: 'ELK-single-node'
 volumes:
   elasticsearch_data:
     name: elasticsearch_data
-  filebeat_logstash_data:
-    name: filebeat_logstash_data
-  # filebeat_elasticsearch_data:
-  #   name: filebeat_elasticsearch_data
-  # auditbeat_data:
-  #   name: auditbeat_data
-  # metricbeat_data:
-  #   name: metricbeat_data
-  # packetbeat_data:
-  #   name: packetbeat_data
+  # filebeat_logstash_data:
+  #   name: filebeat_logstash_data
+  filebeat_elasticsearch_data:
+    name: filebeat_elasticsearch_data
 
 networks:
   web-network:
@@ -133,11 +127,11 @@ services:
       - "traefik.http.routers.kibana-secure.tls.certresolver=le"
       - "traefik.http.services.kibana.loadbalancer.server.port=5601"
 
-  filebeat-logstash:
+  filebeat-elasticsearch:
     image: elastic/filebeat:${ELK_VERSION}
     user: root
-    container_name: filebeat-logstash
-    hostname: "filebeat-logstash-${HOSTNAME}"
+    container_name: filebeat-elasticsearch
+    hostname: "filebeat-elasticsearch-${HOSTNAME}"
     restart: ${RESTART_POLICY}
     command: ["--strict.perms=false"]
     environment:
@@ -146,11 +140,12 @@ services:
       ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
       KIBANA_HOSTNAME: ${KIBANA_HOSTNAME}
     volumes:
-      - ./filebeat-logstash/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./filebeat-es/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./filebeat-es/modules.d:/usr/share/filebeat/modules.d:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/var/log:ro
-      - filebeat_logstash_data:/var/lib/filebeat/data
+      - filebeat_elasticsearch_data:/var/lib/filebeat/data
     networks:
       - elk-network
     depends_on:

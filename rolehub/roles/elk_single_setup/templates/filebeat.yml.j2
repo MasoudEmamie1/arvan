@@ -1,70 +1,58 @@
-#================================== Description ========================================
-# Filebeat Config to send Elasticsearch/Logstash/Kibana in a docker host to Elasticsea-
-# sh cluster.
+# # ======================== Filebeat Inputs =========================
+filebeat.inputs:
 
-name: filebeat-docker-logs-shipper-logstash
+- type: log
+  enabled: true
+  paths:
+    - /var/log/syslog*         # Debian/Ubuntu
+  fields_under_root: true      
+  fields:
+    event.dataset: "syslog"
+    log_type: "syslog"
 
-filebeat.config:
-  modules:
-    path: ${path.config}/modules.d/*.yml
-    reload.enabled: false
+- type: log
+  enabled: true
+  paths:
+    - /var/log/auth.log*
+  fields_under_root: true
+  fields:
+    event.dataset: "auth"
+    log_type: "auth"
 
-#================================ Autodiscover =======================================
-# Autodiscover all containers with elasticsearch images, and add an separate input for
-# each container and log type.
-filebeat.autodiscover:
-  providers:
-    - type: docker
-      hints.enabled: true
+- type: log
+  enabled: true
+  paths:
+    - /var/log/kern.log*
+  fields_under_root: true
+  fields:
+    event.dataset: "kernel"
+    log_type: "kernel"
+
+fields_under_root: true
+fields:
+  service.name: "prometheus-server"   
+  # keep your original too if you want:
+  serve_name: "prometheus-server"
+
+
+filebeat.config.modules:
+  path: ./modules.d/*.yml
+  reload.enabled: false
 
 processors:
+  - add_host_metadata: ~
   - add_cloud_metadata: ~
-
-# Output to Logstash
-output.logstash:
-  hosts: ["logstash:5044"]
-
-#=================================== Kibana ==========================================
-# Enable setting up Kibana
-# Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.
-# This requires a Kibana endpoint configuration.
-setup:
-  kibana:
-    host: "${KIBANA_HOSTNAME}"
-    username: "${ELASTICSEARCH_USERNAME}"
-    password: "${ELASTICSEARCH_PASSWORD}"
-
-#==================================== Monitoring =====================================
-# Enable Monitoring Beats
-# Filebeat can export internal metrics to a central Elasticsearch monitoring
-# cluster.  This requires xpack monitoring to be enabled in Elasticsearch
-
-# Use deprecated option to avoid current UX bug in 7.3.0 where filebeat creates a
-# standalone monitoring cluster in the monitoring UI.
-# see: https://github.com/elastic/beats/pull/13182
-xpack.monitoring:
-  enabled: true
-  elasticsearch:
-    hosts: "${ELASTICSEARCH_HOSTNAME}"
-    username: "${ELASTICSEARCH_USERNAME}"
-    password: "${ELASTICSEARCH_PASSWORD}"
+  - add_docker_metadata: ~
 
 
-#monitoring:
-#  enabled: true
-#  elasticsearch:
-#    hosts: '${ELASTICSEARCH_HOST_PORT}'
-#    username: '${ELASTIC_USERNAME}'
-#    password: '${ELASTIC_PASSWORD}'
+output.elasticsearch:
+  hosts: ["{{ ELASTICSEARCH_HOSTNAME_VAR }}"]
+  username: "{{ ELASTIC_USERNAME_MASKED }}"
+  password: "{{ ELASTIC_PASSWORD_MASKED }}"
+  # ssl.verification_mode: "full"
+  # ssl.certificate_authorities: ["/path/to/ca.crt"]
 
-#================================ HTTP Endpoint ======================================
-# Enabled so we can monitor filebeat using filebeat exporter if needed.
-# Each beat can expose internal metrics through a HTTP endpoint. For security
-# reasons the endpoint is disabled by default. This feature is currently experimental.
-# Stats can be access through http://localhost:5066/stats . For pretty JSON output
-# append ?pretty to the URL.
-
-# Defines if the HTTP endpoint is enabled.
-http.enabled: true
-http.host: 0.0.0.0
-http.port: 5066
+setup.kibana:
+  host: "{{ KIBANA_PUBLIC_URL_VAR }}"
+  username: "{{ ELASTIC_USERNAME_MASKED }}"
+  password: "{{ ELASTIC_PASSWORD_MASKED }}"
