@@ -9,7 +9,7 @@ CURRENT_PORT=22
 
 # Here we try using ssh config file for manage it 
 SERVERS=( 
-arvan-elk-main./s
+	arvan-s3-test
 	)
 
 
