@@ -1,0 +1,40 @@
+name: 'FileBeats Elastic Search'
+
+networks:
+  web-network:
+    name: web-network
+    external: true
+  app-network:
+    name: app-network
+    external: true
+
+volumes:
+  filebeat_data:
+    name: filebeat_data
+    external: false
+
+
+services:
+  filebeat-elasticsearch:
+    image: elastic/filebeat:${ELK_VERSION}
+    container_name: filebeat-elasticsearch
+    hostname: "filebeat-elasticsearch-${HOSTNAME}"
+    user: root
+    restart: ${RESTART_POLICY}
+    command: ["--strict.perms=false"]
+    environment:
+      ELASTICSEARCH_HOSTNAME: ${ELASTICSEARCH_HOSTNAME}
+      ELASTICSEARCH_USERNAME: ${ELASTICSEARCH_USERNAME}
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      KIBANA_HOSTNAME: ${KIBANA_HOSTNAME}
+    volumes:
+      - ./filebeat-es/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./filebeat-es/modules.d:/usr/share/filebeat/modules.d:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log:/var/log:ro
+      - filebeat_data:/var/lib/filebeat/data
+    networks:
+      - web-network
+
+

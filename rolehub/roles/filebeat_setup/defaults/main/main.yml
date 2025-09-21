@@ -1,0 +1,10 @@
+---
+main_domain: log.kube0.ir
+# traefik domain
+traefik_domain: "traefik.{{ main_domain }}"
+
+# acme email for renew certificate
+traefik_acme_email: jalinuxy@gmail.com
+project_dir: /opt/services
+
+service_dir: "{{ project_dir }}/traefik"

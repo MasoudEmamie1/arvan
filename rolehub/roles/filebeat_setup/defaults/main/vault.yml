@@ -1,0 +1,4 @@
+traefik_web_auth_user: admin
+traefik_web_auth_pass: '$2y$05$yGH07iPA9QM68DD9ohqUeecyp6112T7ZOn2kCIM39HwRxEA6awkWu'
+
+unencoded pass: pTh9Z6wywPT7StmnTh3bWC4gHegyAK3A3Gji2HPhYGkN6Zg5eeerMJpthZzTI6doWmo3ZM
