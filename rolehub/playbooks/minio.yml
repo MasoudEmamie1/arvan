@@ -1,0 +1,9 @@
+- name: Install and configuration ELK(Single node) service
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+  - linux_setup
+  - docker_setup
+  - traefik_setup
+  - minio_setup_docker

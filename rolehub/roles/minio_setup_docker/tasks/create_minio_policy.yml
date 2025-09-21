@@ -1,0 +1,25 @@
+---
+# 1) Fetch policy JSON from a URL
+- name: Download bucket policy JSON
+  ansible.builtin.get_url:
+    url: "{{ minio.policy_url }}"
+    dest: "/tmp/{{ minio.bucket }}-policy.json"
+    mode: "0644"
+
+# 2) Read the downloaded policy content
+- name: Read policy file content
+  ansible.builtin.slurp:
+    src: "/tmp/{{ minio.bucket }}-policy.json"
+  register: policy_file
+
+# 3) Ensure bucket exists and apply policy (via S3 API against MinIO)
+- name: Create/ensure bucket and apply policy
+  amazon.aws.s3_bucket:
+    name: "{{ minio.bucket }}"
+    state: present
+    policy: "{{ policy_file.content | b64decode }}"
+    endpoint_url: "{{ minio.endpoint }}"
+    access_key: "{{ minio.access_key }}"
+    secret_key: "{{ minio.secret_key }}"
+    validate_certs: "{{ minio.verify_ssl }}"
+  delegate_to: localhost

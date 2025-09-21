@@ -1,0 +1,74 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mysql-backup-s3
+  namespace: arvan-test
+spec:
+  schedule: "41 3 * * *" # 03:41 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: backup
+              emptyDir: {}
+          initContainers:
+            - name: dumping-mysql
+              image: bitnami/mysql:8.0
+              env:
+                - name: MYSQL_HOST
+                  value: "mysql-primary.arvan-test.svc.cluster.local"
+                - name: MYSQL_USER
+                  value: "root"
+                - name: MYSQL_ROOT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mysql-secret
+                      key: ROOT_PASSWORD
+              command: ["/bin/bash","-lc"]
+              args:
+                - >
+                  set -euo pipefail;
+                  TS=$(date +%F-%H%M);
+                  mysqldump -h "$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_ROOT_PASSWORD"
+                  --single-transaction --routines --events --databases sbtest \
+                  | gzip > /backup/mysql-$TS.sql.gz;
+                  ls -lh /backup
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+
+          containers:
+            - name: upload
+              image: minio/mc:latest
+              env:
+                - name: RETENTION_DAYS # Retention days :)
+                  value: "14"
+              envFrom:
+                - secretRef: { name: s3-auth }   # شامل: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_ENDPOINT, S3_BUCKET
+              command: ["/bin/sh","-c"]
+              args:
+                - |
+                  set -euo pipefail
+                  mc alias set arvan "$S3_ENDPOINT" "$S3_ACCESS_KEY_ID_WRITE" "S3_SECRET_ACCESS_KEY_WRITE" --insecure
+                  mc mb --ignore-existing "$S3_BUCKET" --insecure
+
+                  dumps="$(ls -1 /backup/*.gz 2>/dev/null | head -n 1)"
+                  if [ -z "${dumps}" ]; then
+                    echo "No backup file found in /backup"; exit 1
+                  fi
+                  BASE="$(basename "$dumps")"
+
+                  mc cp "$dumps" "$S3_BUCKET/$BASE"
+
+                  if ! mc stat "$S3_BUCKET/$BASE" >/dev/null 2>&1; then
+                    echo "Upload verification failed for $BASE"; exit 1
+                  fi
+                  echo "Upload ok: $BASE"
+                  rm -f /backup/*.gz || true
+                  HOURS=$(( ${RETENTION_DAYS:-14} * 24 ))
+                  mc rm --recursive --force --older-than "${HOURS}h" "$S3_BUCKET/"
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup

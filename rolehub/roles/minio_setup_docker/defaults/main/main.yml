@@ -1,0 +1,24 @@
+---
+service_dir: "{{ project_dir }}/minio"
+project_dir: /opt/services
+minio_image_tag: RELEASE.2024-11-07T00-52-20Z
+main_domain: kube0.ir
+# minio domain
+minio_api_domain: "api.s3.{{ main_domain }}"
+minio_console_domain: "s3.{{ main_domain }}"
+
+
+### Minio bucket create 
+
+create_minio_bucket: true
+
+minio:
+  endpoint: "https://api.s3.kube0.ir"
+  verify_ssl: false
+  policy_url: "https://example.com/policies/public-read.json"
+  bucket:
+    - mysql
+
+### Minio Policy create
+
+create_minio_policy: true
