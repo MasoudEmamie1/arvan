@@ -13,12 +13,27 @@ minio_console_domain: "s3.{{ main_domain }}"
 create_minio_bucket: true
 
 minio:
+  alias: minio
   endpoint: "https://api.s3.kube0.ir"
   verify_ssl: false
-  policy_url: "https://example.com/policies/public-read.json"
   bucket:
-    - mysql
+    - mysql-backup
 
 ### Minio Policy create
 
 create_minio_policy: true
+
+
+
+# vars/minio.yml
+minio_alias: "minio"
+minio_access_key: "MINIO_ROOT_USER"
+minio_secret_key: "MINIO_ROOT_PASSWORD"
+
+bucket_name: "logs-bucket"
+policy_name: "logs-bucket-rw"
+access_mode: "readwrite"               # one of: readonly | writeonly | readwrite
+
+# Optional: attach policy to a user or group (choose one or neither)
+attach_to_user: ""                     # e.g. "alice"
+attach_to_group: ""                    # e.g. "devs"

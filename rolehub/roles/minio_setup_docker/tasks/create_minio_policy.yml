@@ -1,25 +1,65 @@
----
-# 1) Fetch policy JSON from a URL
-- name: Download bucket policy JSON
-  ansible.builtin.get_url:
-    url: "{{ minio.policy_url }}"
-    dest: "/tmp/{{ minio.bucket }}-policy.json"
+- name: policy JSON
+  template:
+    src: minio-policy.json.j2
+    dest: "/tmp/{{ policy_name }}.json"
     mode: "0644"
+  vars:
+    bucket_name: "{{ bucket_name }}"
+    access_mode: "{{ access_mode | default('readwrite') }}"
 
-# 2) Read the downloaded policy content
-- name: Read policy file content
-  ansible.builtin.slurp:
-    src: "/tmp/{{ minio.bucket }}-policy.json"
-  register: policy_file
+- name: Ensure bucket exists
+  community.docker.docker_container:
+    name: "mc-mb-{{ bucket_name }}"
+    image: "minio/mc:latest"
+    auto_remove: true
+    detach: false
+    env:
+      "MC_HOST_{{ minio_alias }}": "{{ minio.endpoint }}"
+      # Provide creds in URL style: http://ACCESSKEY:SECRETKEY@host:port
+      # If minio_url is e.g. http://minio:9000, build http://AK:SK@minio:9000
+      # We do that inline:
+      "MC_HOST_{{ minio_alias }}": "{{ (minio_url | regex_replace('^(https?://)(.*)$', '\\1' ~ minio_access_key ~ ':' ~ minio_secret_key ~ '@\\2')) }}"
+    command: >
+      sh -c "mc --no-color mb --ignore-existing {{ minio_alias }}/{{ bucket_name }}"
+  register: mb_result
 
-# 3) Ensure bucket exists and apply policy (via S3 API against MinIO)
-- name: Create/ensure bucket and apply policy
-  amazon.aws.s3_bucket:
-    name: "{{ minio.bucket }}"
-    state: present
-    policy: "{{ policy_file.content | b64decode }}"
-    endpoint_url: "{{ minio.endpoint }}"
-    access_key: "{{ minio.access_key }}"
-    secret_key: "{{ minio.secret_key }}"
-    validate_certs: "{{ minio.verify_ssl }}"
-  delegate_to: localhost
+- name: Create/Update policy on MinIO (dockerized mc)
+  community.docker.docker_container:
+    name: "mc-policy-{{ policy_name }}"
+    image: "minio/mc:latest"
+    auto_remove: true
+    detach: false
+    env:
+      "MC_HOST_{{ minio_alias }}": "{{ (minio_url | regex_replace('^(https?://)(.*)$', '\\1' ~ minio_access_key ~ ':' ~ minio_secret_key ~ '@\\2')) }}"
+    volumes:
+      - "/tmp/{{ policy_name }}.json:/policy.json:ro"
+    command: >
+      sh -c "
+      mc --no-color admin policy create {{ minio_alias }} {{ policy_name }} /policy.json
+      || mc --no-color admin policy update {{ minio_alias }} {{ policy_name }} /policy.json
+      "
+  register: policy_result
+
+- name: Attach policy to user (optional)
+  when: attach_to_user | length > 0
+  community.docker.docker_container:
+    name: "mc-policy-attach-user-{{ policy_name }}"
+    image: "minio/mc:latest"
+    auto_remove: true
+    detach: false
+    env:
+      "MC_HOST_{{ minio_alias }}": "{{ (minio_url | regex_replace('^(https?://)(.*)$', '\\1' ~ minio_access_key ~ ':' ~ minio_secret_key ~ '@\\2')) }}"
+    command: >
+      sh -c "mc --no-color admin policy attach {{ minio_alias }} policy={{ policy_name }} user={{ attach_to_user }}"
+
+- name: Attach policy to group (optional)
+  when: attach_to_group | length > 0
+  community.docker.docker_container:
+    name: "mc-policy-attach-group-{{ policy_name }}"
+    image: "minio/mc:latest"
+    auto_remove: true
+    detach: false
+    env:
+      "MC_HOST_{{ minio_alias }}": "{{ (minio_url | regex_replace('^(https?://)(.*)$', '\\1' ~ minio_access_key ~ ':' ~ minio_secret_key ~ '@\\2')) }}"
+    command: >
+      sh -c "mc --no-color admin policy attach {{ minio_alias }} policy={{ policy_name }} group={{ attach_to_group }}"

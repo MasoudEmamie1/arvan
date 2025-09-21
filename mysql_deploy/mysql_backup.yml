@@ -4,7 +4,7 @@ metadata:
   name: mysql-backup-s3
   namespace: arvan-test
 spec:
-  schedule: "41 3 * * *" # 03:41 AM
+  schedule: "41 3 * * *" # Time --->  03:41 AM random time for avoid confict.
   jobTemplate:
     spec:
       template:
@@ -46,7 +46,7 @@ spec:
                 - name: RETENTION_DAYS # Retention days :)
                   value: "14"
               envFrom:
-                - secretRef: { name: s3-auth }   # شامل: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_ENDPOINT, S3_BUCKET
+                - secretRef: { name: s3-auth }
               command: ["/bin/sh","-c"]
               args:
                 - |

@@ -11,3 +11,7 @@ stringData:
   S3_SECRET_ACCESS_KEY_READ: "g!Yq%*Vi3OT$Fp6!#@Z#73Co5b1*m96iS%3ID!!i"
   S3_ENDPOINT: "https://api.s3.kube0.ir"
   S3_BUCKET: "mysql-backup"
+  S3_ACCESS_KEY: 'admin'
+  S3_SECRET_ACCESS_KEY: "fEsLmUikgKl3CFYGwxH7wfS9RdSw5O4GYhBh9A7"
+  S3_BUCKET_CSV: 'csv'
+  S3_CSV_FILENAME: 'employees.csv'
