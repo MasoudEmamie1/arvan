@@ -100,9 +100,9 @@ spec:
         - name: DUR
           value: "60"
         - name: THREADS
-          value: "1 2"
+          value: "1 2 4 8"
         - name: PHASE
-          value: "before"
+          value: "after"
         - name: S3_RESULTS
           value: "arvan-write/benchmark/benchmarks"
         envFrom:
@@ -126,8 +126,13 @@ spec:
                 --mysql-db=$SB_DB --tables=$SB_TABLES --table-size=$SB_TABLE_SIZE \
                 --threads=$th --time=$DUR --report-interval=10 run)
               echo "$OUT"
-              TPS=$(printf "%s" "$OUT" | grep -Eo 'transactions: .*' | awk -F'[()]' '{print $2}' | awk '{print $1}')
-              P95=$(printf "%s" "$OUT" | grep -Eo '95th percentile: .*' | awk '{print $(NF-1)}')
+              
+              TPS=$(printf "%s" "$OUT" \
+                        | awk -F'[()]' '/^ *transactions:/ {gsub(/^[ \t]+/,"",$2); split($2,a," "); print a[1]; exit}')
+
+              P95=$(printf "%s" "$OUT" \
+                        | awk -F': ' '/95th percentile/ {gsub(/[^0-9.]/,"",$2); print $2; exit}')
+
               echo "${PHASE},${LUA},${th},${TPS:-0},${P95:-0}" >> "$CSV"
             done
           }
