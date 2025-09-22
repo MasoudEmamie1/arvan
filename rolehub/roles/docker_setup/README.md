@@ -1,31 +1,124 @@
-Install and Configure Docker Service
-=========
+# docker_setup — Documentation Suite
 
-This Ansible role is designed to automate the installation and configuration of Docker. It provides a streamlined way to set up Docker on multiple systems with consistent settings.
+This repository contains ready‑to‑edit documentation templates install Docker service for Grafana and Prometheus stack.
 
-Features:
---------------
+---
 
-  - Installs Docker and its dependencies.
-  - Configures Docker settings, such as daemon options and storage drivers.
-  - Ensures Docker service is enabled and running.
-  - Supports customization through role variables for flexible setups.
+## README.md
 
-Role Variables
---------------
+```markdown
+# Docker
 
-All variables used in this role are located in the default directory of the role. You can find and modify them in the `roles/docker-installation/defaults/main.yml`
-These variables allow you to customize the Docker installation and configuration based on your requirements. Simply update the variables in this file to tailor the role's behavior to your environment.
+Inspall and deploy a Docker in linux server located in Iran
+## Supported Platforms
+
+- Debian 12 / 11
+
+## Requirements
+- Ansible >= 2.13 (or your minimum)
+- Python on managed hosts (e.g., Python 3.8+)
+- Network access to:
+  - ansible_port: 9510
+  - ansible_user: root
+
+## Role Variables
+
+> Defaults live in `defaults/main.yml`. Required vars are marked **required**.
+
+| Variable | Default | Description | Required |
+|----------|---------|-------------|----------|
+| `docker_dependencies` | `yes` | Docker dependencies packages | **Yes** |
+| `docker_packages` | `yes` | Docker Debian packages | **Yes** |
+| `docker_repo` | `yes` | Define Mirror  | **Yes** |
+| `docker_config` | `yes` | Set some docker deamon conf  | **Yes**|
 
 
-Example Playbook
-----------------
+```
 
-You can use the Docker role in a playbook like the example below to install and configure Docker:
+## Dependencies
+  - linux_setup
 
-    - name: install and configuration docker
-      hosts: all
-      become: true
-      gather_facts: true
-      roles:
-        - ../roles/docker_setup
+## Tags
+- `docker_preparing` — package repos and packages
+- `docker` — Docker prepare
+
+
+### Minimal
+```yaml
+- hosts: app
+  roles:
+    - role: Docker-setup
+      vars:
+        ansible_port : xxx.yyy.zzz
+```
+
+
+### Inventory
+
+```yaml
+all:
+  vars:
+    ansible_user: debian
+    ansible_port: 9510
+  children:
+    arvan:
+      hosts:
+        Docker-arvan:
+        elk-arvan:
+        S3-arvan:
+```
+
+## Handlers
+- `restart containerd` — triggered when templates change
+- `restart docker` — if supported
+
+
+## Author
+Masoud Emami (jalinuxy)
+```
+
+```
+## Tasks (`tasks/main.yml`)
+High‑level outline (do not duplicate full code):
+1. docker preparing
+2. docker installation
+3. docker configuration
+
+
+
+## Supported Platforms (from `meta/main.yml`)
+```yaml
+galaxy_info:
+  platforms:
+    - name: Debian
+      versions: ["bookworm", "bullseye"]
+
+```
+
+---
+
+### Using tags
+```bash
+ansible-playbook site.yml --tags <tag-name>
+ansible-playbook site.yml --skip-tags <tag-name>
+```
+
+
+## Folder Structure (example)
+
+```text
+docker_setup/
+├── defaults/
+│   └── main.yml
+├── tasks/
+│   ├── main.yml
+│   ├── configuration.yml
+│   ├── preparing.yml   
+└── installation.yml
+├── templates/
+│   ├── apt 
+│   │    └── docker-ce.list.j2
+│   ├── docker
+│         └── daemon.json.j2
+└── README.md
+```

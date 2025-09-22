@@ -3,4 +3,7 @@
   become: true
   gather_facts: true
   roles:
+  - linux_setup
+  - docker_setup
+  - traefik_setup
   - elk_single_setup

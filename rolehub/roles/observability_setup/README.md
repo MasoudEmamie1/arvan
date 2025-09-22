@@ -1,13 +1,13 @@
-# elk_setup — Documentation Suite
+# Observability_Setup — Documentation Suite
 
-This repository contains ready‑to‑edit documentation templates install ELK service .
+This repository contains ready‑to‑edit documentation templates install observability service for Grafana and Prometheus stack.
 
 ---
 
 ## README.md
 
 ```markdown
-# ELK
+# Observability
 
 Install and deploy a Prometheus and grafana and filebeat to send logs auth,kernel,sys to elasticsearch
 
@@ -29,24 +29,25 @@ Install and deploy a Prometheus and grafana and filebeat to send logs auth,kerne
 | Variable | Default | Description | Required |
 |----------|---------|-------------|----------|
 | `DOMAIN` | `need to add` | Define main domain services | **Yes** |
-| `ELASTICSEARCH_HOSTNAME_VAR` | `need to add` | Define Elastic Public URL access | **Yes** |
-| `KIBANA_PUBLIC_URL_VAR` | `need to add` | Define Kibana Public URL access | **Yes** |
-| `ELK_VERSION` | `need to add` | Define ELK VERSION  | **Yes**|
-| `service_dir` | `need to add` | Define image tag | **Yes** |
-| `project_dir` | `need to add` | Define image tag | **Yes** |
-| `RESTART_POLICY` | `need to add` | Define container restart policy | **Yes** |
-| `SUBDOMAIN_ELASTIC` | `need to add` | Define service subdomain| **Yes** |
-| `SUBDOMAIN_KIBANA` | `need to add` |Define service subdomain | No |
-| `SERVICE_HOSTNAMES` | `need to add` | Define service hostname | No |
+| `service_dir` | `need to add` | Define Project/service directiry | **Yes** |
+| `project_dir` | `need to add` | Define Project directiry | **Yes** |
+| `prometheus_image_tag` | `need to add` | Define image tag  | **Yes**|
+| `filebeat_image_tag` | `need to add` | Define image tag | **Yes** |
+| `grafana_image_tag` | `need to add` | Define image tag | **Yes** |
+| `restart_policy` | `need to add` | Define container restart policy | **Yes** |
+| `PROM_SUBDOMAIN_` | `need to add` | Define service subdomain| **Yes** |
+| `GRAFANA_SUBDOMAIN_` | `need to add` |Define service subdomain | No |
+| `HOSTNAME` | `need to add` | Define service hostname | No |
 | `service_subdirs` | `need to add` | Define services sundirectory name | **Yes** |
 | `service_dir_mode` | `need to add` | Define services sundirectory permission mode | **Yes** |
-| `service_conf_mode` | `need to add` | Define services configs permission mode | **Yes** |
 
 ### vault Variables
 ```yaml
-ELASTIC_USERNAME_MASKED
-ELASTIC_PASSWORD_MASKED
-ELASTIC_PASSWORD_MASKED
+GRAFANA_USERNAME_MASKED
+GRAFANA_PASSWORD_MASKED
+WEB_AUTH_PROM_USER_MASKED
+WEB_AUTH_PROM_PASS_MASKED
+WEB_AUTH_PROM_PASS_MASKED_SCRAPE
 ```
 
 ## Dependencies
@@ -55,23 +56,23 @@ ELASTIC_PASSWORD_MASKED
   - traefik_setup
 
 ## Tags
-- `preparing_elk` — package repos and packages
+- `pull_observe` — package repos and packages
 - `docker` — Docker prepare
-<!-- - `directories ` —  Directories
+- `directories ` —  Directories
 - `config_files` — Config files
 - `compose` — Compose files
-- `deploy` — deploy service -->
+- `deploy` — deploy service
 
-
+## Examples
 
 ### Minimal
 ```yaml
 - hosts: app
   roles:
-    - role: ELK-setup
+    - role: observability-setuo
       vars:
         DOMAIN: xxx.yyy.zzz
-        ELASTIC_USERNAME_MASKED: "{{ vault_ELASTIC }}"
+        GRAFANA_PASSWORD_MASKED: "{{ vault_GRAFANA }}"
 ```
 
 
@@ -85,7 +86,7 @@ all:
   children:
     arvan:
       hosts:
-        ELK-arvan:
+        observability-arvan:
         elk-arvan:
         S3-arvan:
 ```
@@ -97,18 +98,16 @@ all:
 
 ## Author
 Masoud Emami (jalinuxy)
-```
 
-```
 ## Tasks (`tasks/main.yml`)
 High‑level outline (do not duplicate full code):
 1. Prepare server and install requirments.
-2. Deploy  service
+2. Deploy desired service
 
 
 
 ## Tags
-- `preparing_elk`, `deploy`
+- `pull_observe`, `deploy`
 
 ## Supported Platforms (from `meta/main.yml`)
 ```yaml
@@ -131,23 +130,15 @@ ansible-playbook site.yml --skip-tags <tag-name>
 ## Folder Structure (example)
 
 ```text
-elk_setup/
+observability_setup/
 ├── defaults/
-│      └── main
-│           ├── vault.yml
-│           └── main.yml
+│   └── main.yml
 ├── tasks/
 │   ├── main.yml
 │   └── preparing.yml
 │   └── deploy.yml
 ├── templates/
-│       ├── filebeat.yml.j2
-│       ├── health-check.sh.j2
-│       ├── kibana.yml.j2
-│       ├── logstash.yml.j2
-│       ├── pipeline.conf.j2
-│       ├── system.yml.j2
-│       └── elasticsearch.yml.j2            
+│   └── prometheus.yml.j2
 ├── files/
 │   └── compose.yml
 │   └── pip.conf

@@ -1,38 +1,148 @@
-Role Name
-=========
+# Observability_Setup — Documentation Suite
 
-A brief description of the role goes here.
+This repository contains ready‑to‑edit documentation templates install observability service for Grafana and Prometheus stack.
 
-Requirements
-------------
+---
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+## README.md
 
-Role Variables
---------------
+```markdown
+# Observability
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Install and deploy a Prometheus and grafana and filebeat to send logs auth,kernel,sys to elasticsearch
 
-Dependencies
-------------
+## Supported Platforms
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+- Debian 12 / 11
 
-Example Playbook
-----------------
+## Requirements
+- Ansible >= 2.13 (or your minimum)
+- Python on managed hosts (e.g., Python 3.8+)
+- Network access to:
+  - ansible_port: 9510
+  - ansible_user: root
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Role Variables
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+> Defaults live in `defaults/main.yml`. Required vars are marked **required**.
 
-License
--------
+| Variable | Default | Description | Required |
+|----------|---------|-------------|----------|
+| `DOMAIN` | `need to add` | Define main domain services | **Yes** |
+| `service_dir` | `need to add` | Define Project/service directiry | **Yes** |
+| `project_dir` | `need to add` | Define Project directiry | **Yes** |
+| `prometheus_image_tag` | `need to add` | Define image tag  | **Yes**|
+| `filebeat_image_tag` | `need to add` | Define image tag | **Yes** |
+| `grafana_image_tag` | `need to add` | Define image tag | **Yes** |
+| `restart_policy` | `need to add` | Define container restart policy | **Yes** |
+| `PROM_SUBDOMAIN_` | `need to add` | Define service subdomain| **Yes** |
+| `GRAFANA_SUBDOMAIN_` | `need to add` |Define service subdomain | No |
+| `HOSTNAME` | `need to add` | Define service hostname | No |
+| `service_subdirs` | `need to add` | Define services sundirectory name | **Yes** |
+| `service_dir_mode` | `need to add` | Define services sundirectory permission mode | **Yes** |
 
-BSD
+### vault Variables
+```yaml
+GRAFANA_USERNAME_MASKED
+GRAFANA_PASSWORD_MASKED
+WEB_AUTH_PROM_USER_MASKED
+WEB_AUTH_PROM_PASS_MASKED
+WEB_AUTH_PROM_PASS_MASKED_SCRAPE
+```
 
-Author Information
-------------------
+## Dependencies
+  - linux_setup
+  - docker_setup
+  - traefik_setup
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+## Tags
+- `pull_observe` — package repos and packages
+- `docker` — Docker prepare
+- `directories ` —  Directories
+- `config_files` — Config files
+- `compose` — Compose files
+- `deploy` — deploy service
+
+## Examples
+
+### Minimal
+```yaml
+- hosts: app
+  roles:
+    - role: observability-setuo
+      vars:
+        DOMAIN: xxx.yyy.zzz
+        GRAFANA_PASSWORD_MASKED: "{{ vault_GRAFANA }}"
+```
+
+
+### Inventory
+
+```yaml
+all:
+  vars:
+    ansible_user: debian
+    ansible_port: 9510
+  children:
+    arvan:
+      hosts:
+        observability-arvan:
+        elk-arvan:
+        S3-arvan:
+```
+
+## Handlers
+- `restart containerd` — triggered when templates change
+- `restart docker` — if supported
+
+
+## Author
+Masoud Emami (jalinuxy)
+```
+
+```
+## Tasks (`tasks/main.yml`)
+High‑level outline (do not duplicate full code):
+1. Prepare server and install requirments.
+2. Deploy desired service
+
+
+
+## Tags
+- `pull_observe`, `deploy`
+
+## Supported Platforms (from `meta/main.yml`)
+```yaml
+galaxy_info:
+  platforms:
+    - name: Debian
+      versions: ["bookworm", "bullseye"]
+
+```
+
+---
+
+### Using tags
+```bash
+ansible-playbook site.yml --tags <tag-name>
+ansible-playbook site.yml --skip-tags <tag-name>
+```
+
+
+## Folder Structure (example)
+
+```text
+observability_setup/
+├── defaults/
+│   └── main.yml
+├── tasks/
+│   ├── main.yml
+│   └── preparing.yml
+│   └── deploy.yml
+├── templates/
+│   └── prometheus.yml.j2
+├── files/
+│   └── compose.yml
+│   └── pip.conf
+└── README.md
+```

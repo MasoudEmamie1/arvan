@@ -1,0 +1,13 @@
+---
+- name: Pull images for project
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ service_dir }}"
+  tags:
+  - delpoying_elk
+  - deploying_elk_pull
+
+- name: Deploy Docker Compose stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ service_dir }}"
+  tags:
+  - deploy_elk

@@ -1,0 +1,13 @@
+- name: Pull images for project
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ service_dir }}"
+  tags:
+  - pull_observe
+
+- name: Deploy Docker Compose stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ service_dir }}"
+  tags:
+  - deploy_observe
+
+

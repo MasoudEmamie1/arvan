@@ -94,13 +94,13 @@ spec:
         - name: SB_DB
           value: "demo"
         - name: SB_TABLES
-          value: "16"
+          value: "4"
         - name: SB_TABLE_SIZE
-          value: "100000"
+          value: "30000"
         - name: DUR
           value: "60"
         - name: THREADS
-          value: "1 2 4 8"
+          value: "1 2"
         - name: PHASE
           value: "after"
         - name: S3_RESULTS
