@@ -1,3 +1,4 @@
+# Task 2: Publish mysqld-exporter via Ingress (Basic Auth)
 ## 0) Prereqs
 
 - Prometheus reachable to scrape cluster pods.
@@ -52,5 +53,8 @@ Key panels to include:
 ![Prometheus Screenshot](https://github.com/MasoudEmamie1/arvan-test/blob/master/prometheus.jpg)
 
 - Grafana dashboard screenshot focusing on TPS, buffer pool, and replication lag
-
+![Grafana Screenshot](https://github.com/MasoudEmamie1/arvan-test/blob/master/grafana.jpg)
 - A short note on which dashboard you used/imported
+    > here for sample import dashboard url: https://grafana.com/grafana/dashboards/14057-mysql/ 
+
+    > id 14057

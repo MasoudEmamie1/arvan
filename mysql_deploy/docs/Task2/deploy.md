@@ -1,3 +1,4 @@
+# Task 2: Publish mysqld-exporter via Ingress (Basic Auth)
 ## 0) Prereqs
 - Namespace: `arvan-test`
 - Task 1 deployed (master/replica running)
@@ -123,3 +124,4 @@ kubectl -n arvan-test get pods,svc
 kubectl -n arvan-test port-forward svc/mysql-master-svc 9104:9104 &
 curl -s localhost:9104/metrics | head
 ```
+
