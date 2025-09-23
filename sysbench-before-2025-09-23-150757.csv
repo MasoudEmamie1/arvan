@@ -1,0 +1,7 @@
+phase,test,threads,tps,latency_p95_ms
+after,oltp_point_select,1,523.39,2.07
+after,oltp_point_select,2,1041.15,2.18
+after,oltp_read_only,1,26.06,41.85
+after,oltp_read_only,2,65.67,32.53
+after,oltp_read_write,1,18.01,90.78
+after,oltp_read_write,2,32.20,82.96

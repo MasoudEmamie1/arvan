@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: mysql-metrics-ingress
-  namespace: arvan-test
+  namespace: validation
   annotations:
     nginx.ingress.kubernetes.io/auth-type: basic
     nginx.ingress.kubernetes.io/auth-secret: mysql-metrics-auth
@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: metrics.kube0.ir # <-- Your public domain
+  - host: metricsss.kube0.ir # <-- Your public domain
     http:
       paths:
       # Rule for the Master

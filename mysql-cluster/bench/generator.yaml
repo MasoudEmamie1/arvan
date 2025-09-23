@@ -1,0 +1,69 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-csv-load
+  namespace: validation
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      volumes:
+        - name: data
+          emptyDir: {}
+      initContainers:
+        - name: get-csv
+          image: minio/mc:latest
+          envFrom:
+            - secretRef: { name: s3-auth }
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              set -euo pipefail
+              mc alias set arvan "$S3_ENDPOINT" "$S3_ACCESS_KEY" "$S3_SECRET_ACCESS_KEY" --insecure
+              mc ls "$S3_BUCKET" --insecure
+              mc cp "arvan/$S3_BUCKET_CSV/$S3_CSV_FILENAME" /data/$S3_CSV_FILENAME --insecure
+              ls -lh /data
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      containers:
+        - name: load-to-mysql
+          image: bitnami/mysql:latest
+          env:
+            - name: MYSQL_HOST
+              value: "mysql-master-svc"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PWD
+              valueFrom: { secretKeyRef: { name: mysql-secret, key: ROOT_PASSWORD } }
+            - name: CSV_PATH
+              value: "/data/employees.csv"             
+          command: ["/bin/bash","-lc"]
+          args:
+            - |
+              set -euo pipefail
+              : "${CSV_PATH:?missing}"
+              test -s "$CSV_PATH" || { echo "CSV not found: $CSV_PATH"; exit 1; }
+              sed -i 's/\r$//' "$CSV_PATH" || true
+              /opt/bitnami/mysql/bin/mysql -h "$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_PWD" -e "SHOW GLOBAL VARIABLES LIKE 'local_infile';"
+              cat <<SQL | /opt/bitnami/mysql/bin/mysql --local-infile=1 -h "$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_PWD"
+              CREATE DATABASE IF NOT EXISTS demo;
+              USE demo;
+              CREATE TABLE IF NOT EXISTS events(
+                id BIGINT PRIMARY KEY,
+                user_id BIGINT,
+                event_type VARCHAR(32),
+                created_at DATETIME
+              ) ENGINE=InnoDB;
+              LOAD DATA LOCAL INFILE '$CSV_PATH'
+              INTO TABLE events
+              FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+              LINES TERMINATED BY '\n'
+              IGNORE 1 LINES
+              (id, user_id, event_type, @ts)
+              SET created_at = STR_TO_DATE(@ts, '%Y-%m-%d %H:%i:%s');
+              SQL
+          volumeMounts:
+            - name: data
+              mountPath: /data

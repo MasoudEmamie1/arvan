@@ -44,7 +44,12 @@ GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'localhost
 FLUSH PRIVILEGES;
 
 
-
+CHANGE MASTER TO
+  MASTER_HOST='mysql-master-svc',
+  MASTER_USER='replication',
+  MASTER_PASSWORD='arvan-replica',
+  MASTER_AUTO_POSITION = 1;
+START REPLICA;
 
 
 
@@ -96,7 +101,7 @@ curl -u 'elastic:{{ ELASTIC_PASSWORD_MASKED }}' -X PUT https://{{ SUBDOMAIN_ELAS
   }
 }'
 
-
+for each {auth,kernel,sys}
 curl -X PUT http://es.elk.kube0.ir/_index_template/syslog_template -H 'Content-Type: application/json' -d '{
   "index_patterns": ["syslog-*"],
   "template": {
@@ -110,8 +115,40 @@ curl -X PUT http://es.elk.kube0.ir/_index_template/syslog_template -H 'Content-T
   "priority": 200
 }'
 
+for each {auth,kernel,sys}
 
 curl -X PUT http://<ELASTIC_IP>:9200/syslog-000001 -H 'Content-Type: application/json' -d '{
   "aliases": { "syslog-write": { "is_write_index": true } }
 }'
 
+
+
+
+
+
+----------------------------
+
+
+  todo elk
+`-PUT _ilm/policy/logs-30d-policy
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "actions": {
+          "rollover": {
+            "max_size": "5gb",
+            "max_age": "7d"
+          }
+        }
+      },
+      "delete": {
+        "min_age": "30d",
+        "actions": { "delete": {} }
+      }
+    }
+  }
+}
+`
+-------------------------------------
+2-

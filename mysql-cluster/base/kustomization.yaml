@@ -7,8 +7,8 @@ resources:
   - secret-db.yaml
   - secret-s3.yaml
   - secret-ingress.yaml
-  - ingress.yaml
   - config.yaml
   - svc-exporter.yaml
   #- pvc.yaml(not need)
   - mysql.yaml
+  - ingress.yaml
