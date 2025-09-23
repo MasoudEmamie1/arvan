@@ -5,6 +5,20 @@
   tags:
   - prepare
   - remove_sourcelist
+- name: Find everything inside source.list.d
+  ansible.builtin.find:
+    paths: /etc/apt/sources.list.d/
+    file_type: any
+    recurse: yes
+    hidden: yes
+  register: found
+
+- name: Remove found items
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ found.files }}"
+
 - name: Copy the new sources.list file
   ansible.builtin.template:
     src: sources.list.j2
