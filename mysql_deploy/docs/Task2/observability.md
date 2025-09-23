@@ -10,7 +10,8 @@
 ```bash
 ansible-playbook -i rolehub/playbooks/observability.yml
 ```
-for more info use
+for more info use: 
+[Observability Ansible Readme](../../../rolehub/roles/observability_setup/README.md)
 
 ## 1) Prometheus scraping
 - Scrape by annotations

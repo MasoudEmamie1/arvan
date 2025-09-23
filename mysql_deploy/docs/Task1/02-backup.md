@@ -150,3 +150,7 @@ for manuall test:
 kubectl -n arvan-test create job --from=cronjob/mysql-backup-s3 backup-test-$(date +%s)
 kubectl -n arvan-test logs -l job-name=backup-test-* --all-containers -f
 ```
+
+
+### Minio 
+minio was deploy by ansible and readme is here -> [minio readme](../../../rolehub/roles/minio_setup_docker/README.md)
