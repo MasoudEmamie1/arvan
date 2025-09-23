@@ -86,6 +86,9 @@ spec:
           GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'127.0.0.1';
           GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'::1';
           GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'localhost';
+          # CREATE USER IF NOT EXISTS 'replication'@'%' IDENTIFIED BY '${REPLICATION_PASSWORD}';
+          # ALTER USER 'replication'@'%' IDENTIFIED BY '${REPLICATION_PASSWORD}';
+          # GRANT REPLICATION SLAVE ON *.* TO 'replication'@'%';
           FLUSH PRIVILEGES;
           SQL
           echo "Done. Exiting bootstrap container."
@@ -100,6 +103,11 @@ spec:
             secretKeyRef:
               name: mysql-exporter-secret
               key: EXPORTER_PASSWORD
+        # - name: REPLICATION_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: mysql-secret
+        #       key: REPLICATION_PASSWORD
       - name: mysqld-exporter
         image: prom/mysqld-exporter:v0.14.0
         command: [ "/bin/sh", "-c" ]
@@ -243,7 +251,7 @@ spec:
               name: mysql-secret
               key: ROOT_PASSWORD
         - name: DATA_SOURCE_NAME
-          value: "root:$(MYSQL_ROOT_PASSWORD)@tcp(127.0.0.1:3306)/"  # here we can change user root to mysql_exporter
+          value: "root:$(MYSQL_ROOT_PASSWORD)@tcp(127.0.0.1:3306)/" # here we can change user root to mysql_exporter
       volumes:
       - name: config-volume
         configMap:
