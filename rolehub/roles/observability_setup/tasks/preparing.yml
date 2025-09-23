@@ -60,7 +60,7 @@
 
 - name: Template a filebeat.yml to path
   ansible.builtin.template:
-    src: prometheus.yml.j2
+    src: filebeat.yml.j2
     dest: "{{ service_dir }}/filebeat/filebeat.yml"
     mode: "0644"
   tags:

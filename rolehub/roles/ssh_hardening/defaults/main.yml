@@ -31,7 +31,7 @@ ssh_client_password_login: false # ssh
 ssh_server_password_login: false # sshd
 
 # ports on which ssh-server should listen
-ssh_server_ports: ["8090"] # sshd
+ssh_server_ports: ["9510"] # sshd
 
 # port to which ssh-client should connect
 ssh_client_port: "8090" # ssh

@@ -1,6 +1,6 @@
 ---
 
-DOMAIN: mon.kube0.ir
+DOMAIN: final.kube0.ir
 
 # defaults file for observability
 service_dir: "{{ project_dir }}/observability"

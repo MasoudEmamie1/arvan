@@ -1,6 +1,6 @@
 ---
 - name: Deploy  Monitoring Stack
-  hosts: prom-grafana-arvantest
+  hosts: all
   gather_facts: true
   roles:
     - linux_setup

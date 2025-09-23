@@ -1,0 +1,58 @@
+# # ======================== Filebeat Inputs =========================
+filebeat.inputs:
+
+- type: log
+  enabled: true
+  paths:
+    - /var/log/syslog*         # Debian/Ubuntu
+  fields_under_root: true      
+  fields:
+    event.dataset: "syslog"
+    log_type: "syslog"
+
+- type: log
+  enabled: true
+  paths:
+    - /var/log/auth.log*
+  fields_under_root: true
+  fields:
+    event.dataset: "auth"
+    log_type: "auth"
+
+- type: log
+  enabled: true
+  paths:
+    - /var/log/kern.log*
+  fields_under_root: true
+  fields:
+    event.dataset: "kernel"
+    log_type: "kernel"
+
+fields_under_root: true
+fields:
+  service.name: "prometheus-server"   
+  # keep your original too if you want:
+  serve_name: "prometheus-server"
+
+
+filebeat.config.modules:
+  path: ./modules.d/*.yml
+  reload.enabled: false
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+
+
+output.elasticsearch:
+  hosts: ["{{ ELASTICSEARCH_HOSTNAME_VAR }}"]
+  username: "{{ ELASTIC_USERNAME_MASKED }}"
+  password: "{{ ELASTIC_PASSWORD_MASKED }}"
+  # ssl.verification_mode: "full"
+  # ssl.certificate_authorities: ["/path/to/ca.crt"]
+
+setup.kibana:
+  host: "{{ KIBANA_PUBLIC_URL_VAR }}"
+  username: "{{ ELASTIC_USERNAME_MASKED }}"
+  password: "{{ ELASTIC_PASSWORD_MASKED }}"
