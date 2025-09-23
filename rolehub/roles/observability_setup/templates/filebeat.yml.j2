@@ -36,7 +36,7 @@ fields:
 
 
 filebeat.config.modules:
-  path: ./modules.d/*.yml
+  path: ${path.config}/modules.d/*.yml #./modules.d/*.yml
   reload.enabled: false
 
 processors:

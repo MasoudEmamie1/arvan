@@ -1,6 +1,6 @@
 ---
 #### DOMAINS LIST
-DOMAIN: log.kube0.ir
+DOMAIN: finall.kube0.ir
 SUBDOMAIN_ELASTIC: es
 SUBDOMAIN_KIBANA: dash
 # SUBDOMAIN_FLEET: fleet if we want to deploy a integrated and high traffic design we can you fleet to integrate with elasticsearsh.
