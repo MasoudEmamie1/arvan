@@ -49,7 +49,7 @@ Key panels to include:
 ## 5) Deliverables (observability)
 
 - Screenshot of Prometheus Targets page.
-![Prometheus Screenshot](https://github.com/MasoudEmamie1/arvan-test/blob/master/Screenshot_20250923_152842.jpg)
+![Prometheus Screenshot](https://github.com/MasoudEmamie1/arvan-test/blob/master/prometheus.jpg)
 
 - Grafana dashboard screenshot focusing on TPS, buffer pool, and replication lag
 
