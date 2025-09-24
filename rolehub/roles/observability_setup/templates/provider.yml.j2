@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: "{{ GRAFANA_PROVISION.NAME }}"
+    orgId: {{ GRAFANA_PROVISION.orgId}}
+    folder: "{{ GRAFANA_PROVISION.folder}}"
+    type: {{ GRAFANA_PROVISION.type}}
+    disableDeletion: {{ GRAFANA_PROVISION.disableDeletion}}
+    allowUiUpdates: {{ GRAFANA_PROVISION.allowUiUpdates}}
+    updateIntervalSeconds: {{ GRAFANA_PROVISION.updateIntervalSeconds}}
+    options:
+      path: {{ GRAFANA_PROVISION.options.path}}
+      foldersFromFilesStructure: {{ GRAFANA_PROVISION.options.foldersFromFilesStructure}}

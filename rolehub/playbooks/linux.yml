@@ -5,3 +5,6 @@
   gather_facts: true
   roles:
     - linux_setup
+    - os_hardening
+    - ssh_hardening
+    - docker_setup

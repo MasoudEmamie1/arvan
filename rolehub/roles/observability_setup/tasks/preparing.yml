@@ -83,14 +83,25 @@
 #   tags:
 #   - preparing_observe
 
-- name: Copy dashboards with owner and permissions
-  ansible.builtin.copy:
-    src: mysql-arvan-test.json
-    dest: "{{ service_dir }}/grafana/dashboards/mysql-arvan-test.json"
-    mode: "0600"
+- name: Copy dashboard provider with owner and permissions
+  ansible.builtin.template:
+    src: provider.yml.j2
+    dest: "{{ service_dir }}/grafana/dashboards/provider.yml"
+    mode: "0644"
   tags:
   - preparing_observe
-  - compose 
+  - dash_provision
+
+- name: Copy all dashboards.json files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ service_dir }}/grafana/dashboards/{{ item | basename }}"
+    mode: "0644"
+  loop: "{{ query( 'fileglob' , 'files/dashboards/*.json' ) }}"
+  tags:
+    - preparing_observe
+    - dash_provision
+
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
     src: compose.yml

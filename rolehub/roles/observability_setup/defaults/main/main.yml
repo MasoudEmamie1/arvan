@@ -1,6 +1,6 @@
 ---
 
-DOMAIN: final.kube0.ir
+DOMAIN: prov.lnx1.ir
 
 # defaults file for observability
 service_dir: "{{ project_dir }}/observability"
@@ -34,3 +34,15 @@ PROMETHEUS_PROVISION:
   PROMETHEUS_NAME: "prom-main"
   isDefault: true
   isEditable: false
+
+GRAFANA_PROVISION:
+  NAME: "MySQL Dashboards Provider"
+  orgId: 1 
+  type: file
+  folder: MySQL
+  disableDeletion: true
+  allowUiUpdates: true
+  updateIntervalSeconds: "10"
+  options:
+    path: /etc/grafana/provisioning/dashboards
+    foldersFromFilesStructure: false
