@@ -36,7 +36,7 @@ elasticsearch: http://elasticsearch:9200...
     dns lookup... OK
     addresses: 172.20.0.2
     dial up... OK
-  TLS... WARN secure connection disabled
+  TLS... WARN secure connection disabled # in this get we access locally to elastic
   talk to server... OK
   version: 7.17.13
 ```
