@@ -1,6 +1,12 @@
 - name: Install and configuration Prom+grafana service
   hosts: all
   become: true
+  # we can override some vars likes DOMAIN OR SUNDOMAIN's 
   gather_facts: true
   roles:
+  - linux_setup
+  - os_hardening
+  - ssh_hardening
+  - docker_setup
+  - traefik_setup
   - observability_setup

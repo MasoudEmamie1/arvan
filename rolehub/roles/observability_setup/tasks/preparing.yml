@@ -67,6 +67,30 @@
   - preparing_observe
   - config_files
 
+- name: Template a Prometheus datasource  to path
+  ansible.builtin.template:
+    src: prometheus-provision.yml.j2
+    dest: "{{ service_dir }}/grafana/datasources/prometheus.yml"
+    mode: "0644"
+  tags:
+  - preparing_observe
+  - config_files
+# - name: Copy datasources with owner and permissions
+#   ansible.builtin.copy:
+#     src: prometheus.yml
+#     dest: "{{ service_dir }}/grafana/datasources/prometheus.yml"
+#     mode: "0600"
+#   tags:
+#   - preparing_observe
+
+- name: Copy dashboards with owner and permissions
+  ansible.builtin.copy:
+    src: mysql-arvan-test.json
+    dest: "{{ service_dir }}/grafana/dashboards/mysql-arvan-test.json"
+    mode: "0600"
+  tags:
+  - preparing_observe
+  - compose 
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
     src: compose.yml

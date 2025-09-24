@@ -7,4 +7,5 @@
 - name: Deploy ELK
   import_tasks: deploy.yml
 
-
+- name: Deploy ELK
+  import_tasks: configuration.yml

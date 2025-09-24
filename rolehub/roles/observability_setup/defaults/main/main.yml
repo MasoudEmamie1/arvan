@@ -21,4 +21,16 @@ HOSTNAME: node-exporter
 service_subdirs:
   - prometheus
   - filebeat
+  - grafana
+  - grafana/datasources
+  - grafana/dashboards
 service_dir_mode: "0755"
+
+
+# For provision domain we can use ${PROM_SUBDOMAIN_}.${DOMAIN}
+# but here just user name of service of local access.
+PROMETHEUS_PROVISION:
+  PROMETHEUS_HOST: "http://prometheus:9090"
+  PROMETHEUS_NAME: "prom-main"
+  isDefault: true
+  isEditable: false

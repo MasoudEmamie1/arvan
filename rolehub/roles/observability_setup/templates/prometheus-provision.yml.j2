@@ -1,0 +1,10 @@
+apiVersion: 1
+
+datasources:
+  - name: {{ PROMETHEUS_PROVISION.PROMETHEUS_NAME }}
+    type: prometheus
+    access: proxy
+    uid: prom-main
+    url: {{ PROMETHEUS_PROVISION.PROMETHEUS_HOST }}
+    isDefault: {{ PROMETHEUS_PROVISION.isDefault}}
+    editable: {{ PROMETHEUS_PROVISION.isEditable}}
