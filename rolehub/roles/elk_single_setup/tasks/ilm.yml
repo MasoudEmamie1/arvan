@@ -1,0 +1,50 @@
+- name: Ensure ILM policy
+  ansible.builtin.uri:
+    url: "{{ ELASTICSEARCH_URL_PUBLIC }}/_ilm/policy/{{ ILM.POLICY_NAME }}"
+    method: PUT
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    force_basic_auth: yes
+    status_code: [200]
+    body_format: json
+    body:
+      policy:
+        phases:
+          hot:
+            actions:
+              rollover:
+                max_age: "{{ ILM.MAX_AGE_HOT | default('7d') }}"
+                max_size: "{{ ILM.MAX_SIZE_HOT | default('10gb') }}"
+              set_priority:
+                priority: 100
+          warm:
+            min_age: "{{ ILM.MAX_AGE_HOT | default('7d')) }}"
+            actions:
+              forcemerge:
+                max_num_segments: 1
+              set_priority:
+                priority: 50
+              # shrink:
+              #   number_of_shards: 1
+          cold:
+            min_age: "{{ ILM.MIN_AGE_COLD | default('30d') }}"
+            actions:
+              set_priority:
+                priority: 25
+              # allocate:
+              #   require:
+              #     data: cold
+          delete:
+            min_age: "{{ ILM.MIN_AGE_DELETE | default('180d') }}"
+            actions:
+              delete: {}
+
+- name: Re-run filebeat setup to attach policy to template
+  ansible.builtin.command:
+    cmd: >
+      docker compose -f {{ service_dir }}/compose.yml
+      run --rm filebeat
+      setup --index-management
+  args:
+    chdir: "{{ service_dir }}"
+  changed_when: false

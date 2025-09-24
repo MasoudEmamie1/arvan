@@ -1,0 +1,22 @@
+# Load ILM defaults/template/pipelines/dashboards once the stack is up.
+
+- name: Check if Filebeat index template already exists
+  ansible.builtin.uri:
+    url: "{{ elk_es_url }}/_index_template/filebeat"
+    user: "{{ es_user }}"
+    password: "{{ es_pass }}"
+    force_basic_auth: yes
+    status_code: [200,404]
+  register: fb_template
+  tags: filebeat_setup
+
+- name: Run filebeat setup
+  ansible.builtin.command:
+    cmd: >
+      docker compose -f {{ service_dir }}/compose.yml
+      run --rm filebeat
+      setup --index-management --pipelines --dashboards
+  args:
+    chdir: "{{ service_dir }}"
+  when: fb_template.status == 404
+  tags: [filebeat_setup]
