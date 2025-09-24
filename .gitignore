@@ -2,3 +2,5 @@ mysql_deploy
 mysql_deploy/*
 mitogen3.24
 mitogen3.24/*
+manifests
+manifests/*
