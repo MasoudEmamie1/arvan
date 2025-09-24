@@ -22,3 +22,21 @@ curl https://<ELASTIC_DOMAIN>/_cat/health
 ```
 Expected status:
   - yellow -> single node
+
+## 4) Verify Filebeat integration
+```bash
+docker exec -it <filebeat_service_name> filebeat test output
+```
+and expected to get sth like:
+```bash
+elasticsearch: http://elasticsearch:9200...
+  parse url... OK
+  connection...
+    parse host... OK
+    dns lookup... OK
+    addresses: 172.20.0.2
+    dial up... OK
+  TLS... WARN secure connection disabled
+  talk to server... OK
+  version: 7.17.13
+```
