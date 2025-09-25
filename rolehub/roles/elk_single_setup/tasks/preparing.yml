@@ -1,4 +1,3 @@
-
 - name: Copy file
   ansible.builtin.copy:
     src: pip.conf
@@ -16,6 +15,12 @@
   tags:
   - preparing_elk
   - docker
+
+- name: Install rsyslog if not installed
+  apt:
+    name: rsyslog
+    state: present
+  tags: preparing_elk
 
 - name: Create a docker network with name
   community.docker.docker_network:
@@ -80,12 +85,6 @@
     mode: "{{ service_conf_mode }}"
   tags: preparing_elk
 
-- name : Install rsyslog if not installed 
-  apt:
-    name: rsyslog
-    state: present
-  tags: preparing_elk
-  
 - name: Template Filebeat configuration
   ansible.builtin.template:
     src: filebeat.yml.j2

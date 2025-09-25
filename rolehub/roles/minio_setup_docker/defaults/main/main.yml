@@ -2,7 +2,7 @@
 service_dir: "{{ project_dir }}/minio"
 project_dir: /opt/services
 minio_image_tag: RELEASE.2024-11-07T00-52-20Z
-main_domain: kube0.ir
+DOMAIN: kube0.ir
 # minio domain
 minio_api_domain: "api.s3.{{ main_domain }}"
 minio_console_domain: "s3.{{ main_domain }}"

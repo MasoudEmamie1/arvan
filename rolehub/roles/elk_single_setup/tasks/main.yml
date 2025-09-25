@@ -3,9 +3,13 @@
 
 - name: Prepare ELK
   import_tasks: preparing.yml
-
+  tags:
+    - preparing_elk
+    
 - name: Deploy ELK
   import_tasks: deploy.yml
+  tags:
+    - delpoying_elk
 
 - name: Health ELK
   import_tasks: health.yml

@@ -1,22 +1,74 @@
-# Load ILM defaults/template/pipelines/dashboards once the stack is up.
+- name: Check if ILM policy exists
+  uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}:443/_ilm/policy/{{ ILM.POLICY_NAME}}"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: GET
+    headers:
+      Content-Type: "application/json"
+    validate_certs: false
+  delegate_to: localhost
+  register: ilm_check
+  failed_when: false
+  retries: 5
+  delay: 20
+  tags:
+  - ilm_check
+  - ilm_create
+    # - name: Print ILM check result
+    #   debug:
+    #     var: ilm_check
+    #   tags:
+    #   - ilm_check
 
-- name: Check if Filebeat index template already exists
-  ansible.builtin.uri:
-    url: "{{ elk_es_url }}/_index_template/filebeat"
-    user: "{{ es_user }}"
-    password: "{{ es_pass }}"
-    force_basic_auth: yes
-    status_code: [200,404]
-  register: fb_template
-  tags: filebeat_setup
+- name: Create ILM policy only if not exists
+  uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}. {{ DOMAIN }}:443/_ilm/policy/{{ ILM.POLICY_NAME}}"
+    username: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: PUT
+    headers:
+      Content-Type: "application/json"
+    validate_certs: false
+    body_format: json
+    body:
+      policy:
+        phases:
+          hot:
+            min_age: "0d"
+            actions:
+              rollover:
+                max_size: "{{ ILM.MAX_SIZE_HOT }}"
+                max_age: "{{ ILM.MAX_AGE_HOT}}"
+              set_priority:
+                priority: 100
+          warm:
+            min_age: "{{ ILM.MAX_AGE_HOT}}"
+            actions:
+              set_priority:
+                priority: 50
+              shrink:
+                number_of_shards: 1
+              forcemerge:
+                max_num_segments: 1
+          cold:
+            min_age: "30d"
+            actions:
+              set_priority:
+                priority: 0
+              freeze: {}
+          delete:
+            min_age: "90d"
+            actions:
+              delete: {}
+  delegate_to: localhost
+  when: ilm_check.status == 404
+  register: ilm_create_response
+  until: ilm_create_response.status == 200
+  tags:
+  - ilm_create
 
-- name: Run filebeat setup
-  ansible.builtin.command:
-    cmd: >
-      docker compose -f {{ service_dir }}/compose.yml
-      run --rm filebeat
-      setup --index-management --pipelines --dashboards
-  args:
-    chdir: "{{ service_dir }}"
-  when: fb_template.status == 404
-  tags: [filebeat_setup]
+- name: Print ILM create result
+  debug:
+    var: ilm_create_response
+  # when: ilm_check.status == 404

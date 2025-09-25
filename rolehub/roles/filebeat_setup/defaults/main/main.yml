@@ -1,5 +1,5 @@
 ---
-main_domain: log.kube0.ir
+DOMAIN: log.kube0.ir
 # traefik domain
 traefik_domain: "traefik.{{ main_domain }}"
 
