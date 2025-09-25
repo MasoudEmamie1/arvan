@@ -1,18 +1,22 @@
 ---
 #### DOMAINS LIST
-DOMAIN: finall.kube0.ir
+DOMAIN: :)
 SUBDOMAIN_ELASTIC: es
-SUBDOMAIN_KIBANA: dash
+SUBDOMAIN_KIBANA: kibana
 # SUBDOMAIN_FLEET: fleet if we want to deploy a integrated and high traffic design we can you fleet to integrate with elasticsearsh.
 
 
 ELASTICSEARCH_HOSTNAME_VAR: http://elasticsearch:9200
+ELASTICSEARCH_URL_PUBLIC: https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}
 KIBANA_PUBLIC_URL_VAR: http://kibana:5601
+KIBANA_URL_PUBLIC: https://{{ SUBDOMAIN_KIBANA }}.{{ DOMAIN }}
 ## SERVICES Hostname
 SERVICE_HOSTNAMES: arvan.elk.server
 
 # ELK VERSION
-ELK_VERSION: 7.17.13
+ELK_VERSION: 7.17.13 #7.17.13 is worked 
+## here we want to migrate to newer version data incurropt first from 7.17.13 to 8.19.4 then 9.1.4. test !
+
 # defaults file for
 service_dir: "{{ project_dir }}/elk_single_node"
 
@@ -30,3 +34,17 @@ service_subdirs:
   - filebeat-es/modules.d
 service_dir_mode: "0755"
 service_conf_mode: "0755"
+
+ILM:
+  POLICY_NAME: "logs-hot7d-warm30d-cold90d-del180d"
+  # HOT
+  MAX_AGE_HOT: "7d"
+  MAX_SIZE_HOT: "10G"
+
+  # Warm
+  MIN_AGE_WARM: "7d"
+  # Cold
+  MIN_AGE_COLD: "30d"
+
+  # delete
+  MIN_AGE_DELETE: "180d"

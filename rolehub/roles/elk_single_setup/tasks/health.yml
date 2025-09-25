@@ -1,0 +1,40 @@
+- name: Wait for Elasticsearch up
+  ansible.builtin.uri:
+    url: "{{ ELASTICSEARCH_URL_PUBLIC }}"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    force_basic_auth: yes
+    return_content: yes
+    status_code: 200
+  register: es_ping
+  retries: 30
+  delay: 5
+  until: es_ping.status == 200
+  tags: elk_healthcheck
+
+- name: Wait for cluster green/yellow
+  ansible.builtin.uri:
+    url: "{{ ELASTICSEARCH_URL_PUBLIC }}/_cluster/health?wait_for_status=yellow&timeout=60s"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    force_basic_auth: yes
+    status_code: 200
+  register: es_health
+  retries: 20
+  delay: 5
+  until: es_health.json.status in ['yellow','green']
+  tags: elk_healthcheck
+
+- name: Wait for Kibana status
+  ansible.builtin.uri:
+    url: "{{ KIBANA_URL_PUBLIC }}/api/status"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    force_basic_auth: yes
+    headers: {"kbn-xsrf":"true"}
+    status_code: 200
+  register: kb_status
+  retries: 30
+  delay: 5
+  until: kb_status.status == 200
+  tags: elk_healthcheck

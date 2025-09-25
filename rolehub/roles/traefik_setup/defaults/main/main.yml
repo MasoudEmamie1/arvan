@@ -1,10 +1,14 @@
 ---
-main_domain: prov.lnx1.ir
+DOMAIN: prov.lnx1.ir
 # traefik domain
-traefik_domain: "traefik.{{ main_domain }}"
+traefik_domain: "traefik.{{ DOMAIN }}"
 
 # acme email for renew certificate
 traefik_acme_email: jalinuxy@gmail.com
 project_dir: /opt/services
 
 service_dir: "{{ project_dir }}/traefik"
+
+pip_packages:
+  - python3-apt
+  - python3-pip

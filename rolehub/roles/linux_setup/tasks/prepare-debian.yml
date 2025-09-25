@@ -1,3 +1,14 @@
+- name: Install pip
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+    state: present
+    # update_cache: true
+    # loop:
+    # - python3-apt
+    # - python3-pip
+  tags:
+  - preparing
+
 - name: Ensure the previous sourcelist is removed
   ansible.builtin.file:
     path: /etc/apt/sources.list

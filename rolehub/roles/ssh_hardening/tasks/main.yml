@@ -5,3 +5,5 @@
     apply:
       become: true
   when: ssh_hardening_enabled | bool
+  tags:
+    - ssh_hardening 

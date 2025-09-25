@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 1,
+  "id": 2,
   "links": [],
   "panels": [
     {
@@ -48,7 +48,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(245, 54, 54, 0.9)"
+                "color": "rgba(245, 54, 54, 0.9)",
+                "value": 0
               },
               {
                 "color": "rgba(237, 129, 40, 0.89)",
@@ -95,7 +96,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "10m",
@@ -132,7 +133,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(245, 54, 54, 0.9)"
+                "color": "rgba(245, 54, 54, 0.9)",
+                "value": 0
               },
               {
                 "color": "rgba(237, 129, 40, 0.89)",
@@ -186,7 +188,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "10m",
@@ -223,7 +225,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(50, 172, 45, 0.97)"
+                "color": "rgba(50, 172, 45, 0.97)",
+                "value": 0
               },
               {
                 "color": "rgba(237, 129, 40, 0.89)",
@@ -277,7 +280,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "10m",
@@ -348,6 +351,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -363,7 +367,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -444,7 +449,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -534,6 +539,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -549,7 +555,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -758,7 +765,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -856,6 +863,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -871,7 +879,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -915,7 +924,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -971,6 +980,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -986,7 +996,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1066,7 +1077,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -1166,6 +1177,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1181,7 +1193,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1218,7 +1231,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -1303,6 +1316,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1318,7 +1332,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1416,7 +1431,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -1549,6 +1564,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1564,7 +1580,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1622,7 +1639,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -1726,6 +1743,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1741,7 +1759,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1778,7 +1797,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -1847,6 +1866,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1862,7 +1882,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1899,7 +1920,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -1972,6 +1993,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1987,7 +2009,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -2024,7 +2047,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -2109,6 +2132,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -2124,7 +2148,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -2161,7 +2186,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -2246,6 +2271,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -2261,7 +2287,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -2364,7 +2391,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "datasource": {
@@ -2514,6 +2541,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -2529,7 +2557,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -2572,7 +2601,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -2629,6 +2658,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -2644,7 +2674,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -2702,7 +2733,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -2759,6 +2790,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -2774,7 +2806,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -2832,7 +2865,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -2888,6 +2921,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -2903,7 +2937,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -2960,7 +2995,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -3017,6 +3052,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -3032,7 +3068,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -3089,7 +3126,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -3120,317 +3157,6 @@
         "w": 24,
         "x": 0,
         "y": 96
-      },
-      "id": 391,
-      "panels": [],
-      "title": "Query Cache",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "uid": "$datasource"
-      },
-      "description": "**MySQL Query Cache Memory**\n\nThe query cache has huge scalability problems in that only one thread can do an operation in the query cache at the same time. This serialization is true not only for SELECTs, but also for INSERT/UPDATE/DELETE.\n\nThis also means that the larger the `query_cache_size` is set to, the slower those operations become. In concurrent environments, the MySQL Query Cache quickly becomes a contention point, decreasing performance. MariaDB and AWS Aurora have done work to try and eliminate the query cache contention in their flavors of MySQL, while MySQL 8.0 has eliminated the query cache feature.\n\nThe recommended settings for most environments is to set:\n  ``query_cache_type=0``\n  ``query_cache_size=0``\n\nNote that while you can dynamically change these values, to completely remove the contention point you have to restart the database.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 97
-      },
-      "id": 46,
-      "options": {
-        "dataLinks": [],
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.0.4",
-      "targets": [
-        {
-          "calculatedInterval": "2m",
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "datasourceErrors": {},
-          "editorMode": "code",
-          "errors": {},
-          "expr": "mysql_global_status_qcache_free_memory{job=~\"$job\", instance=~\"$instance\"}",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Free Memory",
-          "metric": "",
-          "range": true,
-          "refId": "F",
-          "step": 20
-        },
-        {
-          "calculatedInterval": "2m",
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "datasourceErrors": {},
-          "errors": {},
-          "expr": "mysql_global_variables_query_cache_size{job=~\"$job\", instance=~\"$instance\"}",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Query Cache Size",
-          "metric": "",
-          "refId": "E",
-          "step": 20
-        }
-      ],
-      "title": "MySQL Query Cache Memory",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "uid": "$datasource"
-      },
-      "description": "**MySQL Query Cache Activity**\n\nThe query cache has huge scalability problems in that only one thread can do an operation in the query cache at the same time. This serialization is true not only for SELECTs, but also for INSERT/UPDATE/DELETE.\n\nThis also means that the larger the `query_cache_size` is set to, the slower those operations become. In concurrent environments, the MySQL Query Cache quickly becomes a contention point, decreasing performance. MariaDB and AWS Aurora have done work to try and eliminate the query cache contention in their flavors of MySQL, while MySQL 8.0 has eliminated the query cache feature.\n\nThe recommended settings for most environments is to set:\n``query_cache_type=0``\n``query_cache_size=0``\n\nNote that while you can dynamically change these values, to completely remove the contention point you have to restart the database.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 97
-      },
-      "id": 45,
-      "options": {
-        "dataLinks": [],
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.0.4",
-      "targets": [
-        {
-          "calculatedInterval": "2m",
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "datasourceErrors": {},
-          "errors": {},
-          "expr": "rate(mysql_global_status_qcache_hits{job=~\"$job\", instance=~\"$instance\"}[$__interval]) or irate(mysql_global_status_qcache_hits{job=~\"$job\", instance=~\"$instance\"}[5m])",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Hits",
-          "metric": "",
-          "refId": "B",
-          "step": 20
-        },
-        {
-          "calculatedInterval": "2m",
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "datasourceErrors": {},
-          "errors": {},
-          "expr": "rate(mysql_global_status_qcache_inserts{job=~\"$job\", instance=~\"$instance\"}[$__interval]) or irate(mysql_global_status_qcache_inserts{job=~\"$job\", instance=~\"$instance\"}[5m])",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Inserts",
-          "metric": "",
-          "refId": "C",
-          "step": 20
-        },
-        {
-          "calculatedInterval": "2m",
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "datasourceErrors": {},
-          "errors": {},
-          "expr": "rate(mysql_global_status_qcache_not_cached{job=~\"$job\", instance=~\"$instance\"}[$__interval]) or irate(mysql_global_status_qcache_not_cached{job=~\"$job\", instance=~\"$instance\"}[5m])",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Not Cached",
-          "metric": "",
-          "refId": "D",
-          "step": 20
-        },
-        {
-          "calculatedInterval": "2m",
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "datasourceErrors": {},
-          "errors": {},
-          "expr": "rate(mysql_global_status_qcache_lowmem_prunes{job=~\"$job\", instance=~\"$instance\"}[$__interval]) or irate(mysql_global_status_qcache_lowmem_prunes{job=~\"$job\", instance=~\"$instance\"}[5m])",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Prunes",
-          "metric": "",
-          "refId": "F",
-          "step": 20
-        },
-        {
-          "calculatedInterval": "2m",
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "datasourceErrors": {},
-          "errors": {},
-          "expr": "mysql_global_status_qcache_queries_in_cache{job=~\"$job\", instance=~\"$instance\"}",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Queries in Cache",
-          "metric": "",
-          "refId": "E",
-          "step": 20
-        }
-      ],
-      "title": "MySQL Query Cache Activity",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 104
       },
       "id": 392,
       "panels": [],
@@ -3470,6 +3196,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -3485,7 +3212,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -3501,7 +3229,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 105
+        "y": 97
       },
       "id": 43,
       "options": {
@@ -3522,7 +3250,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -3576,6 +3304,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -3591,7 +3320,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -3607,7 +3337,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 105
+        "y": 97
       },
       "id": 41,
       "options": {
@@ -3628,7 +3358,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -3681,7 +3411,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 112
+        "y": 104
       },
       "id": 393,
       "panels": [],
@@ -3722,6 +3452,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -3737,7 +3468,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -3770,7 +3502,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 113
+        "y": 105
       },
       "id": 44,
       "links": [
@@ -3797,7 +3529,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -3901,6 +3633,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -3916,7 +3649,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -3932,7 +3666,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 113
+        "y": 105
       },
       "id": 42,
       "links": [
@@ -3959,7 +3693,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -4003,7 +3737,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 120
+        "y": 112
       },
       "id": 394,
       "panels": [],
@@ -4044,6 +3778,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -4059,7 +3794,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -4088,7 +3824,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 121
+        "y": 113
       },
       "id": 54,
       "links": [
@@ -4115,7 +3851,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.4",
+      "pluginVersion": "12.2.0",
       "targets": [
         {
           "calculatedInterval": "2m",
@@ -4168,7 +3904,7 @@
   ],
   "preload": false,
   "refresh": "10s",
-  "schemaVersion": 41,
+  "schemaVersion": 42,
   "tags": [],
   "templating": {
     "list": [
@@ -4245,5 +3981,5 @@
   "timezone": "",
   "title": "MySQL Exporter",
   "uid": "549c2bf8936f7767ea6ac47c47b00f2a",
-  "version": 9
+  "version": 1
 }

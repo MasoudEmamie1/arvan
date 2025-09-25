@@ -1,6 +1,6 @@
 ---
 
-DOMAIN: prov.lnx1.ir
+DOMAIN: :)
 
 # defaults file for observability
 service_dir: "{{ project_dir }}/observability"
@@ -8,9 +8,9 @@ service_dir: "{{ project_dir }}/observability"
 project_dir: /opt/services
 
 # docker configuration
-prometheus_image_tag: v3.3.0
+prometheus_image_tag: v3.6.0
 filebeat_image_tag: 7.17.13
-grafana_image_tag: 12.0
+grafana_image_tag: 12.2 # prefer to use 12.0 for stability in prod env
 restart_policy: unless-stopped
 
 PROM_SUBDOMAIN_: prom

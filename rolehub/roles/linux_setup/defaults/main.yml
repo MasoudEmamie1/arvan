@@ -13,3 +13,7 @@ repos:
 - { url: "https://repo.jalinuxy.ir/repository/debian/", suite_suffix: "-proposed-updates" }
 - { url: "https://repo.jalinuxy.ir/repository/debian/", suite_suffix: "-backports" }
 - { url: "https://repo.jalinuxy.ir/repository/debian-security/", suite_suffix: "-security" } #https://security.debian.org/debian-security/
+
+packages:
+ - python3-apt
+ - python3-pip
