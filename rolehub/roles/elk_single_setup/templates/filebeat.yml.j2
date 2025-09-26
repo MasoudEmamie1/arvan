@@ -10,47 +10,56 @@ filebeat.inputs:
     event.dataset: "syslog"
     log_type: "syslog"
 
-- type: log
-  enabled: true
-  paths:
-    - /var/log/auth.log*
-  fields_under_root: true
-  fields:
-    event.dataset: "auth"
-    log_type: "auth"
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/auth.log
+      - /var/log/syslog
+      - /var/log/kern.log
 
-- type: log
-  enabled: true
-  paths:
-    - /var/log/kern.log*
-  fields_under_root: true
-  fields:
-    event.dataset: "kernel"
-    log_type: "kernel"
+    processors:
+      - add_fields:
+          when.contains:
+            log.file.path: "auth.log"
+          target: ""
+          fields:
+            event.dataset: "authlog"
+            log_type: "auth"
+
+      - add_fields:
+          when.contains:
+            log.file.path: "syslog"
+          target: ""
+          fields:
+            log_type: "syslog"
+            event.dataset: "syslog"
+
+
+      - add_fields:
+          when.contains:
+            log.file.path: "kern.log"
+          target: ""
+          fields:
+            log_type: "kernel"
+            event.dataset: "kernel"
+
 
 fields_under_root: true
 fields:
-  service.name: "prometheus-server"   
-  # keep your original too if you want:
-  serve_name: "prometheus-server"
+  service.name: "{{ SERVICE_HOSTNAMES }}"   
+  server_name: "{{ SERVICE_HOSTNAMES }}"
 
-
-filebeat.config.modules:
-  path: ./modules.d/*.yml
-  reload.enabled: false
-
-processors:
-  - add_host_metadata: ~
-  - add_cloud_metadata: ~
-  - add_docker_metadata: ~
-
+setup.ilm.enabled: false
+setup.template.enabled: false
 
 output.elasticsearch:
   hosts: ["{{ ELASTICSEARCH_HOSTNAME_VAR }}"]
   username: "{{ ELASTIC_USERNAME_MASKED }}"
   password: "{{ ELASTIC_PASSWORD_MASKED }}"
-  # ssl.verification_mode: "full"
-  # ssl.certificate_authorities: ["/path/to/ca.crt"]
+  index: "logs-%{[log_type]}-%{+yyyy.MM.dd}"
+  ssl.verification_mode: none
+
 
 setup.kibana:
   host: "{{ KIBANA_PUBLIC_URL_VAR }}"

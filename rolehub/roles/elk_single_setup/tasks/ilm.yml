@@ -1,50 +1,222 @@
-- name: Ensure ILM policy
-  ansible.builtin.uri:
-    url: "{{ ELASTICSEARCH_URL_PUBLIC }}/_ilm/policy/{{ ILM.POLICY_NAME }}"
-    method: PUT
+- name: Check if ILM policy for logs-auth exists
+  uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}/_ilm/policy/ilm-auth-hot7d-warm30d-cold90d-del180d"
     user: "{{ ELASTIC_USERNAME_MASKED }}"
     password: "{{ ELASTIC_PASSWORD_MASKED }}"
-    force_basic_auth: yes
-    status_code: [200]
+    method: GET
+    headers:
+      Content-Type: "application/json"
+    validate_certs: false
+  delegate_to: localhost
+  register: ilm_auth_check
+  failed_when: false
+  tags:
+  - ilm-auth
+  - ilm_create
+
+- name: Create ILM policy for logs-auth
+  uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}:443/_ilm/policy/ilm-auth-hot7d-warm30d-cold90d-del180d"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: PUT
+    headers:
+      Content-Type: "application/json"
+    validate_certs: false
     body_format: json
     body:
       policy:
         phases:
           hot:
+            min_age: "0d"
             actions:
               rollover:
-                max_age: "{{ ILM.MAX_AGE_HOT | default('7d') }}"
-                max_size: "{{ ILM.MAX_SIZE_HOT | default('10gb') }}"
+                max_size: "10g"
+                max_age: "7d"
               set_priority:
                 priority: 100
           warm:
-            min_age: "{{ ILM.MAX_AGE_HOT | default('7d')) }}"
+            min_age: "7d"
             actions:
-              forcemerge:
-                max_num_segments: 1
-              set_priority:
-                priority: 50
-              # shrink:
-              #   number_of_shards: 1
+              set_priority: { priority: 50 }
+              shrink: { number_of_shards: 1 }
+              forcemerge: { max_num_segments: 1 }
           cold:
-            min_age: "{{ ILM.MIN_AGE_COLD | default('30d') }}"
+            min_age: "90d"
             actions:
-              set_priority:
-                priority: 25
-              # allocate:
-              #   require:
-              #     data: cold
+              set_priority: { priority: 0 }
+              freeze: {}
           delete:
-            min_age: "{{ ILM.MIN_AGE_DELETE | default('180d') }}"
+            min_age: "180d"
             actions:
               delete: {}
+  when: ilm_auth_check.status == 404
+  delegate_to: localhost
+  register: ilm_auth_create
+  retries: 5
+  delay: 15
+  until: ilm_auth_create.status == 200
+  tags:
+  - ilm-auth
+  - ilm_create
 
-- name: Re-run filebeat setup to attach policy to template
-  ansible.builtin.command:
-    cmd: >
-      docker compose -f {{ service_dir }}/compose.yml
-      run --rm filebeat
-      setup --index-management
-  args:
-    chdir: "{{ service_dir }}"
-  changed_when: false
+- name: Check if ILM policy for logs-syslog exists
+  uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}/_ilm/policy/ilm-syslog-hot7d-warm30d-cold90d-del180d"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: GET
+    headers:
+      Content-Type: "application/json"
+    validate_certs: false
+  delegate_to: localhost
+  register: ilm_syslog_check
+  failed_when: false
+  tags:
+  - ilm-syslog
+  - ilm_create
+
+- name: Create ILM policy for logs-syslog
+  uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}:443/_ilm/policy/ilm-syslog-hot7d-warm30d-cold90d-del180d"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: PUT
+    headers:
+      Content-Type: "application/json"
+    validate_certs: false
+    body_format: json
+    body:
+      policy:
+        phases:
+          hot:
+            min_age: "0d"
+            actions:
+              rollover:
+                max_size: "10g"
+                max_age: "7d"
+              set_priority:
+                priority: 100
+          warm:
+            min_age: "7d"
+            actions:
+              set_priority: { priority: 50 }
+              shrink: { number_of_shards: 1 }
+              forcemerge: { max_num_segments: 1 }
+          cold:
+            min_age: "90d"
+            actions:
+              set_priority: { priority: 0 }
+              freeze: {}
+          delete:
+            min_age: "180d"
+            actions:
+              delete: {}
+  when: ilm_syslog_check.status == 404
+  delegate_to: localhost
+  register: ilm_syslog_create
+  retries: 5
+  delay: 15
+  until: ilm_syslog_create.status == 200
+  tags:
+  - ilm-syslog
+  - ilm_create
+
+- name: Check if ILM policy for logs-kernel exists
+  uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}/_ilm/policy/ilm-kernel-hot7d-warm30d-cold90d-del180d"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: GET
+    headers:
+      Content-Type: "application/json"
+    validate_certs: false
+  delegate_to: localhost
+  register: ilm_kernel_check
+  failed_when: false
+  tags:
+  - ilm-kernel
+  - ilm_create
+
+- name: Create ILM policy for logs-kernel
+  uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}:443/_ilm/policy/ilm-kernel-hot7d-warm30d-cold90d-del180d"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: PUT
+    headers:
+      Content-Type: "application/json"
+    validate_certs: false
+    body_format: json
+    body:
+      policy:
+        phases:
+          hot:
+            min_age: "0d"
+            actions:
+              rollover:
+                max_size: "10g"
+                max_age: "7d"
+              set_priority:
+                priority: 100
+          warm:
+            min_age: "7d"
+            actions:
+              set_priority: { priority: 50 }
+              shrink: { number_of_shards: 1 }
+              forcemerge: { max_num_segments: 1 }
+          cold:
+            min_age: "90d"
+            actions:
+              set_priority: { priority: 0 }
+              freeze: {}
+          delete:
+            min_age: "180d"
+            actions:
+              delete: {}
+  when: ilm_kernel_check.status == 404
+  delegate_to: localhost
+  register: ilm_kernel_create
+  retries: 5
+  delay: 15
+  until: ilm_kernel_create.status == 200
+  tags:
+  - ilm-kernel
+  - ilm_create
+
+- name: Create index template for logs-auth (safe version)
+  uri:
+    url: "https:/{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}/_index_template/logs-auth-template"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: PUT
+    headers:
+      Content-Type: "application/json"
+    validate_certs: false
+    body_format: json
+    body:
+      index_patterns:
+      - "logs-auth-*"
+      template:
+        settings:
+          index:
+            number_of_shards: 1
+            number_of_replicas: 1
+            lifecycle:
+              name: "ilm-auth-hot7d-warm30d-cold90d-del180d"
+              rollover_alias: "logs-auth"
+        mappings:
+          dynamic: true
+          properties:
+            "@timestamp":
+              type: date
+            message:
+              type: text
+      priority: 200
+  delegate_to: localhost
+  register: logs_auth_template_create
+  retries: 5
+  delay: 15
+  until: logs_auth_template_create.status == 200
+  tags:
+  - template-log-auth

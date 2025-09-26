@@ -36,15 +36,32 @@ service_dir_mode: "0755"
 service_conf_mode: "0755"
 
 ILM:
-  POLICY_NAME: "logs-hot7d-warm30d-cold90d-del180d"
+  POLICY_NAME: "ilm-auth-hot7d-warm30d-cold90d-del180d"
   # HOT
   MAX_AGE_HOT: "7d"
   MAX_SIZE_HOT: "10G"
 
   # Warm
-  MIN_AGE_WARM: "7d"
+  # MIN_AGE_WARM: "7d"
   # Cold
   MIN_AGE_COLD: "30d"
 
   # delete
   MIN_AGE_DELETE: "180d"
+
+alias:
+  alias_name: logs-auth-00001
+  alias: logs-auth
+
+ILM_AUTH:
+  ilm-name: "ilm-auth-hot7d-warm30d-cold90d-del180d"
+  MAX_AGE_HOT: "7d"
+  MAX_SIZE_HOT: "10G"
+  MAX_AGE_WARM: "30d"
+  MIN_AGE_COLD: "90d"
+  MIN_AGE_DELETE: "180d"
+
+ilm-syslog:
+  ilm-name: ilm-syslog-hot7d-warm30d-cold90d-del180d
+ilm-kernel:
+  ilm-name: ilm-kernel-hot7d-warm30d-cold90d-del180d
