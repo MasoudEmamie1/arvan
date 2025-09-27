@@ -44,7 +44,7 @@
       }
   become: true
 
-- name: Create an Ingest Pipeline to route logs based on type
+- name: Create a resilient Ingest Pipeline to route logs
   ansible.builtin.uri:
     url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}/_ingest/pipeline/log_router_pipeline"
     user: "{{ ELASTIC_USERNAME_MASKED }}"
@@ -55,12 +55,20 @@
     body: |
       {% raw %}
       {
-        "description": "Routes logs to different indices based on the log_type field",
+        "description": "Routes logs based on log_type, with a fallback for untagged events.",
         "processors": [
           {
             "set": {
               "field": "_index",
-              "value": "{{{log_type}}}-logs"
+              "value": "{{{log_type}}}-logs",
+              "on_failure": [
+                {
+                  "set": {
+                    "field": "_index",
+                    "value": "fallback-logs"
+                  }
+                }
+              ]
             }
           }
         ]
@@ -68,7 +76,7 @@
       {% endraw %}
   become: true
   tags:
-  - ingest_pipline
+    - ingest
 
 - name: Create an index template for all logs
   ansible.builtin.uri:
@@ -80,7 +88,7 @@
     body_format: json
     body: |
       {
-        "index_patterns": ["*-logs-*"],
+        "index_patterns": ["*-logs"],
         "template": {
           "settings": {
             "number_of_shards": 1,
@@ -97,3 +105,5 @@
         }
       }
   become: true
+  tags: 
+   - template
