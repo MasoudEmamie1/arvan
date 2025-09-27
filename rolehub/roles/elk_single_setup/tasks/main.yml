@@ -5,6 +5,7 @@
   import_tasks: preparing.yml
   tags:
     - preparing_elk
+
 - name: Deploy ELK
   import_tasks: deploy.yml
   tags:
@@ -12,9 +13,6 @@
 
 - name: Health ELK
   import_tasks: health.yml
-
-- name: Config ELK
-  import_tasks: configuration.yml
 
 - name: Config ilm
   import_tasks: ilm.yml
