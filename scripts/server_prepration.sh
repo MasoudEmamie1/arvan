@@ -10,7 +10,11 @@ CURRENT_PORT=22
 # Here we try using ssh config file for manage it 
 SERVERS=( 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	prom-prov
+=======
+	elk-prov
+>>>>>>> Stashed changes
 =======
 	elk-prov
 >>>>>>> Stashed changes
