@@ -1,0 +1,99 @@
+# Add these tasks to roles/elk_server/tasks/main.yml
+
+- name: Wait for Elasticsearch to be available
+  ansible.builtin.uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    force_basic_auth: yes
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 30
+  delay: 10
+
+- name: Create an ILM Policy for logs
+  ansible.builtin.uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}/_ilm/policy/logs_policy"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: PUT
+    force_basic_auth: yes
+    body_format: json
+    body: |
+      {
+        "policy": {
+          "phases": {
+            "hot": {
+              "min_age": "0ms",
+              "actions": {
+                "rollover": {
+                  "max_primary_shard_size": "50gb",
+                  "max_age": "7d"
+                }
+              }
+            },
+            "delete": {
+              "min_age": "30d",
+              "actions": {
+                "delete": {}
+              }
+            }
+          }
+        }
+      }
+  become: true
+
+- name: Create an Ingest Pipeline to route logs based on type
+  ansible.builtin.uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}/_ingest/pipeline/log_router_pipeline"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: PUT
+    force_basic_auth: yes
+    body_format: json
+    body: |
+      {% raw %}
+      {
+        "description": "Routes logs to different indices based on the log_type field",
+        "processors": [
+          {
+            "set": {
+              "field": "_index",
+              "value": "{{{log_type}}}-logs"
+            }
+          }
+        ]
+      }
+      {% endraw %}
+  become: true
+  tags:
+  - ingest_pipline
+
+- name: Create an index template for all logs
+  ansible.builtin.uri:
+    url: "https://{{ SUBDOMAIN_ELASTIC }}.{{ DOMAIN }}/_index_template/logs_template"
+    user: "{{ ELASTIC_USERNAME_MASKED }}"
+    password: "{{ ELASTIC_PASSWORD_MASKED }}"
+    method: PUT
+    force_basic_auth: yes
+    body_format: json
+    body: |
+      {
+        "index_patterns": ["*-logs-*"],
+        "template": {
+          "settings": {
+            "number_of_shards": 1,
+            "number_of_replicas": 0,
+            "index.lifecycle.name": "logs_policy",
+            "index.lifecycle.rollover_alias": "logs"
+          }
+        },
+        "composed_of": [],
+        "priority": 500,
+        "data_stream": {},
+        "_meta": {
+          "description": "Main template for routing server logs"
+        }
+      }
+  become: true

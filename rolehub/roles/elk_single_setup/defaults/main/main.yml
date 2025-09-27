@@ -61,7 +61,12 @@ ILM_AUTH:
   MIN_AGE_COLD: "90d"
   MIN_AGE_DELETE: "180d"
 
-ilm-syslog:
-  ilm-name: ilm-syslog-hot7d-warm30d-cold90d-del180d
-ilm-kernel:
-  ilm-name: ilm-kernel-hot7d-warm30d-cold90d-del180d
+log_types:
+  - auth
+  - syslog
+  - kernel
+
+ilm_policies:
+  auth: "ilm-auth-hot7d-warm30d-cold90d-del180d"
+  syslog: "ilm-syslog-hot7d-warm30d-cold90d-del180d"
+  kernel: "ilm-kernel-hot7d-warm30d-cold90d-del180d"
