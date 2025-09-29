@@ -9,3 +9,5 @@ rolehub/mitogen/*
 rolehub/mitogen3.24
 rolehub/mitogen3.24/*
 rolehub/roles/observability_setup/files/dashboards/systemd.json
+.vscode
+.vscode/*
