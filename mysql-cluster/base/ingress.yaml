@@ -11,20 +11,18 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: metricsss.kube0.ir # <-- Your public domain
+  - host: metricsss.kube0.ir
     http:
       paths:
-      # Rule for the Master
       - path: /master(/|$)(.*)
-        pathType: ImplementationSpecific # <-- CORRECTED
+        pathType: ImplementationSpecific
         backend:
           service:
             name: mysql-master-svc
             port:
               number: 9104
-      # Rule for the Slave
       - path: /slave(/|$)(.*)
-        pathType: ImplementationSpecific # <-- CORRECTED
+        pathType: ImplementationSpecific
         backend:
           service:
             name: mysql-slave-svc
