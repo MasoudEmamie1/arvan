@@ -453,7 +453,7 @@ If your bootstrap already sets it up, you can skip. Otherwise:
 ```bash
 
 # Create replicator on master
-kubectl -n arvan-test exec -it sts/mysql-master-0 -- /bin/bash -lc '
+kubectl -n arvan-test exec -it sts/mysql-master -- /bin/bash -lc '
 mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e "
 CREATE USER 'replication'@'%' IDENTIFIED BY 'arvan-replica';
 ALTER USER 'replication'@'%' IDENTIFIED BY 'arvan-replica';
@@ -461,8 +461,8 @@ GRANT REPLICATION SLAVE ON *.* TO 'replication'@'%';
 FLUSH PRIVILEGES;
 "'
 
-kubectl -n arvan-test exec -it sts/mysql-slave-0 -- /bin/bash -lc '
-mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e "
+kubectl -n arvan-test exec -it sts/mysql-slave -- /bin/bash -lc '
+mysql -e "
 CHANGE MASTER TO
   MASTER_HOST='mysql-master-svc',
   MASTER_USER='replication',
@@ -470,6 +470,43 @@ CHANGE MASTER TO
   MASTER_AUTO_POSITION = 1;
 START REPLICA;
 "'
+```
+we need to temp disable super_read_only here:
+```sql
+SET GLOBAL super_read_only = OFF;
+```
+and user native password for root or mysqld_exporter 
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY 'your_root_password';
+CREATE USER IF NOT EXISTS 'mysqld_exporter'@'::1' IDENTIFIED WITH 'mysql_native_password' BY  'exporter';
+CREATE USER IF NOT EXISTS 'mysqld_exporter'@'127.0.0.1' IDENTIFIED WITH 'mysql_native_password' BY  'exporter';
+CREATE USER IF NOT EXISTS 'mysqld_exporter'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY  'exporter';
+GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'::1';
+GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'127.0.0.1';
+GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysqld_exporter'@'localhost';
+SET GLOBAL super_read_only = ON;
+FLUSH PRIVILEGES;
+
+```
+
+`tip` 
+in spec we can disable in sysctl pod all ipv6
+```yaml
+spec:
+  securityContext:
+    sysctls:
+    - name: net.ipv6.conf.all.disable_ipv6
+      value: "1"
+    - name: net.ipv6.conf.default.disable_ipv6
+      value: "1"
+  containers:
+  - name: mysql
+```
+again turn off.
+```sql
+SET GLOBAL super_read_only = ON;
+FLUSH PRIVILEGES;
+EXIT;
 ```
 ## 6) Data generation
 this source get a sample cvs from s3 and user from local to impoert csv data in db.

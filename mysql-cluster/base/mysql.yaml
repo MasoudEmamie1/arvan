@@ -2,13 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql-master-svc
-  namespace: validation
+  namespace: final
 spec:
   ports:
   - name: mysql
     port: 3306
   - name: mysql-exporter
-    port: 9104 #>> use this port for mysql-metrics
+    port: 9104    #----->> use this port for mysql-metrics
     targetPort: 9104
   selector:
     app: mysql-master
@@ -17,7 +17,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql-master
-  namespace: validation
+  namespace: final
 spec:
   selector:
     matchLabels:
@@ -74,9 +74,9 @@ spec:
         - |
           echo "Waiting for MySQL to be ready...";
           sleep 10;
-          until mysqladmin -hlocalhost -uroot -p"$MYSQL_ROOT_PASSWORD"; do sleep 2; done
+          until mysqladmin -uroot -p"$MYSQL_ROOT_PASSWORD" ping ; do sleep 2; done
           echo "Creating/Granting exporter user...";
-          mysql -uroot -p"$MYSQL_ROOT_PASSWORD" <<'SQL'
+          mysql -uroot -p"$MYSQL_ROOT_PASSWORD" << SQL
           DROP USER IF EXISTS 'mysqld_exporter'@'127.0.0.1';
           DROP USER IF EXISTS 'mysqld_exporter'@'::1';
           DROP USER IF EXISTS 'mysqld_exporter'@'localhost';
@@ -93,7 +93,7 @@ spec:
           SQL
           echo "Done. Exiting bootstrap container."
         env:
-        - name: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_ROOT_PASSWORD  # we can change this varible to MYSQL_PWD to mysqladmin get auto from env
           valueFrom:
             secretKeyRef:
               name: mysql-secret
@@ -163,13 +163,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql-slave-svc
-  namespace: validation
+  namespace: final
 spec:
   ports:
   - name: mysql
     port: 3306
   - name: mysql-exporter
-    port: 9104 #>> use this port for mysql-metrics
+    port: 9104    #------>> use this port for mysql-metrics
     targetPort: 9104
   selector:
     app: mysql-slave
@@ -178,7 +178,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql-slave
-  namespace: validation
+  namespace: final
 spec:
   selector:
     matchLabels:
@@ -224,34 +224,69 @@ spec:
           mountPath: /etc/mysql/conf.d
       - name: mysqld-exporter
         image: prom/mysqld-exporter:v0.14.0
+        command: [ "/bin/sh", "-c" ]
         args:
-        - "--collect.global_status"
-        - "--collect.info_schema.innodb_metrics"
-        - "--collect.auto_increment.columns"
-        - "--collect.info_schema.processlist"
-        - "--collect.binlog_size"
-        - "--collect.info_schema.tablestats"
-        - "--collect.global_variables"
-        - "--collect.info_schema.query_response_time"
-        - "--collect.info_schema.userstats"
-        - "--collect.info_schema.tables"
-        - "--collect.perf_schema.tablelocks"
-        - "--collect.perf_schema.file_events"
-        - "--collect.perf_schema.eventswaits"
-        - "--collect.perf_schema.indexiowaits"
-        - "--collect.perf_schema.tableiowaits"
-        - "--collect.slave_status"
+        - |
+          set -e 
+          export DATA_SOURCE_NAME="mysqld_exporter:${EXPORTER_PASSWORD}@tcp(127.0.0.1:3306)/"
+          exec /bin/mysqld_exporter \
+          --collect.global_status \
+          --collect.info_schema.innodb_metrics \
+          --collect.auto_increment.columns \
+          --collect.info_schema.processlist \
+          --collect.binlog_size \
+          --collect.info_schema.tablestats \
+          --collect.global_variables \
+          --collect.info_schema.query_response_time \
+          --collect.info_schema.userstats \
+          --collect.info_schema.tables \
+          --collect.perf_schema.tablelocks \
+          --collect.perf_schema.file_events \
+          --collect.perf_schema.eventswaits \
+          --collect.perf_schema.indexiowaits \
+          --collect.perf_schema.tableiowaits \
+          --collect.slave_status
         ports:
         - containerPort: 9104
           name: exporter
         env:
-        - name: MYSQL_ROOT_PASSWORD
+        - name: EXPORTER_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-secret
-              key: ROOT_PASSWORD
+              name: mysql-exporter-secret
+              key: EXPORTER_PASSWORD
         - name: DATA_SOURCE_NAME
-          value: "root:$(MYSQL_ROOT_PASSWORD)@tcp(127.0.0.1:3306)/" # here we can change user root to mysql_exporter
+          value: "mysqld_exporter:${EXPORTER_PASSWORD}@tcp(127.0.0.1:3306)/"
+      # - name: mysqld-exporter
+      #   image: prom/mysqld-exporter:v0.14.0
+      #   args:
+      #   - "--collect.global_status"
+      #   - "--collect.info_schema.innodb_metrics"
+      #   - "--collect.auto_increment.columns"
+      #   - "--collect.info_schema.processlist"
+      #   - "--collect.binlog_size"
+      #   - "--collect.info_schema.tablestats"
+      #   - "--collect.global_variables"
+      #   - "--collect.info_schema.query_response_time"
+      #   - "--collect.info_schema.userstats"
+      #   - "--collect.info_schema.tables"
+      #   - "--collect.perf_schema.tablelocks"
+      #   - "--collect.perf_schema.file_events"
+      #   - "--collect.perf_schema.eventswaits"
+      #   - "--collect.perf_schema.indexiowaits"
+      #   - "--collect.perf_schema.tableiowaits"
+      #   - "--collect.slave_status"
+      #   ports:
+      #   - containerPort: 9104
+      #     name: exporter
+      #   env:
+      #   - name: EXPORTER_PASSWORD
+      #     valueFrom:
+      #       secretKeyRef:
+      #         name: mysql-exporter-secret
+      #         key: EXPORTER_PASSWORD
+      #   - name: DATA_SOURCE_NAME
+      #     value: "mysqld_exporter:${EXPORTER_PASSWORD}@tcp(127.0.0.1:3306)/" # here we can change user root to mysql_exporter
       volumes:
       - name: config-volume
         configMap:
